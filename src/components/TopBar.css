@@ -1,0 +1,66 @@
+.top-bar {
+  background-color: #EFF0FA;
+  padding: 4px 32px;
+  width: 100%;
+}
+
+.top-bar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.entagged-name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  background-color: #0F7D50;
+  border-radius: 50%;
+}
+
+.device-name {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #2B2851;
+  letter-spacing: 0.2px;
+}
+
+.device-details {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.detail-item {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.detail-item svg {
+  flex-shrink: 0;
+}
+
+.detail-item span {
+  font-family: 'Inter', sans-serif;
+  font-weight: 450;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #2B2851;
+  letter-spacing: 0.1px;
+}

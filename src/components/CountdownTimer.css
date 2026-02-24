@@ -1,0 +1,27 @@
+.countdown-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.countdown-circle {
+  flex-shrink: 0;
+}
+
+.countdown-progress {
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #2B2851;
+  letter-spacing: 0.1px;
+  min-width: 32px;
+}
+
+.timer-text.timer-inactive {
+  color: #565569;
+}

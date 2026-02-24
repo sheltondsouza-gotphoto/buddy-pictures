@@ -1,0 +1,54 @@
+.bottom-navigation {
+    background-color: white;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 787px; /* Changed from 100% to match app-container width */
+    max-width: 100%; /* Prevent overflow on smaller screens */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px -1px 4px 0px rgba(43, 40, 81, 0.06);
+  }
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  padding: 6px 8px;
+  height: 66px;
+  cursor: default;
+  pointer-events: none;
+}
+
+.bottom-nav-icon {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 16px;
+  border-radius: 16px;
+}
+
+.bottom-nav-icon.active {
+  background-color: #EFF0FA;
+}
+
+.bottom-nav-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 450;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #565569;
+  letter-spacing: 0.1px;
+  margin: 0;
+  text-align: center;
+}
+
+.bottom-nav-label.active {
+  font-weight: 600;
+  color: #2B2851;
+  letter-spacing: 0.2px;
+}
