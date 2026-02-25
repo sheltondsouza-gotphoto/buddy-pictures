@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslation } from '../translations/translations';
 import './List.css';
 import CurrentlyChosen from './CurrentlyChosen';
 import { useTagging } from '../context/TaggingContext';
@@ -7,6 +9,8 @@ import ToastNotification from './ToastNotification';
 
 function NamesList({ names, onBack, job, group, teacher }) {
   const { addCode, maxLimit, savedSubjects, showLimitModal, setShowLimitModal } = useTagging();
+  const { language } = useLanguage();
+  const t = (key, params) => getTranslation(key, language, params);
   const [showToast, setShowToast] = useState(false);
   const [dontShowModal, setDontShowModal] = useState(false);
 
@@ -37,14 +41,14 @@ function NamesList({ names, onBack, job, group, teacher }) {
         <CurrentlyChosen />
         <div className="list-header">
           <div className="list-header-left">
-            <button className="back-button" onClick={onBack} aria-label="Back">
+            <button className="back-button" onClick={onBack} aria-label={t('ariaBack')}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15 18L9 12L15 6" stroke="#2B2851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            <h2 className="list-title">Names</h2>
+            <h2 className="list-title">{t('names')}</h2>
           </div>
-          <button className="icon-button" aria-label="Search">
+          <button className="icon-button" aria-label={t('ariaSearch')}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="11" cy="11" r="7" stroke="#2B2851" strokeWidth="2"/>
               <path d="M20 20L16 16" stroke="#2B2851" strokeWidth="2" strokeLinecap="round"/>
@@ -67,7 +71,7 @@ function NamesList({ names, onBack, job, group, teacher }) {
       {showLimitModal && <LimitReachedModal onClose={handleCloseLimitModal} />}
       {showToast && (
         <ToastNotification 
-          message={`This camera cannot tag more than ${maxLimit} subjects`}
+          message={t('toastLimitMessage', { max: maxLimit })}
           onClose={() => setShowToast(false)}
         />
       )}

@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslation } from '../translations/translations';
 import './LimitReachedModal.css';
 
 function LimitReachedModal({ onClose }) {
+  const { language } = useLanguage();
+  const t = (key, params) => getTranslation(key, language, params);
   const [doNotShowAgain, setDoNotShowAgain] = useState(false);
 
   const handleOK = () => {
@@ -12,9 +16,9 @@ function LimitReachedModal({ onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h2 className="modal-title">Limit Reached</h2>
+        <h2 className="modal-title">{t('limitReached')}</h2>
         <p className="modal-message">
-          You have reached the maximum number of subjects that can be tagged.
+          {t('limitReachedMessage')}
         </p>
         <div className="modal-checkbox-container">
           <label className="modal-checkbox-label">
@@ -24,11 +28,11 @@ function LimitReachedModal({ onClose }) {
               onChange={(e) => setDoNotShowAgain(e.target.checked)}
               className="modal-checkbox"
             />
-            <span>Do not show again</span>
+            <span>{t('doNotShowAgain')}</span>
           </label>
         </div>
         <button className="modal-button" onClick={handleOK}>
-          OK
+          {t('ok')}
         </button>
       </div>
     </div>

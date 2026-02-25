@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TaggingProvider, useTagging } from './context/TaggingContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import Header from './components/Header';
 import TopBar from './components/TopBar';
 import JobsList from './components/JobsList';
@@ -7,18 +8,22 @@ import BottomNavigation from './components/BottomNavigation';
 import GroupsList from './components/GroupsList';
 import TeachersList from './components/TeachersList';
 import NamesList from './components/NamesList';
+import Settings from './components/Settings';
 import ConfirmModal from './components/ConfirmModal';
 import { namesData, organizeByHierarchy } from './data/names';
+import { getTranslation } from './translations/translations';
 import './App.css';
 
 function AppContent() {
-  const [currentView, setCurrentView] = useState('jobs'); // 'jobs', 'groups', 'teachers', 'names'
+  const [currentView, setCurrentView] = useState('jobs'); // 'jobs', 'groups', 'teachers', 'names', 'settings'
   const [selectedJob, setSelectedJob] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   
   const organizedData = organizeByHierarchy(namesData);
   const { showConfirmModal, handleConfirmTurnOff, handleCancelTurnOff } = useTagging();
+  const { language } = useLanguage();
+  const t = (key, params) => getTranslation(key, language, params);
   
   const handleJobClick = (job) => {
     setSelectedJob(job);
@@ -45,11 +50,19 @@ function AppContent() {
     } else if (currentView === 'groups') {
       setCurrentView('jobs');
       setSelectedJob(null);
+    } else if (currentView === 'settings') {
+      setCurrentView('jobs');
     }
+  };
+
+  const handleSettingsClick = () => {
+    setCurrentView('settings');
   };
   
   const renderContent = () => {
     switch (currentView) {
+      case 'settings':
+        return <Settings onBack={handleBack} />;
       case 'groups':
         return (
           <GroupsList
@@ -102,14 +115,14 @@ function AppContent() {
           <div className="body-section">
             {renderContent()}
           </div>
-          <BottomNavigation />
+          <BottomNavigation onSettingsClick={handleSettingsClick} currentView={currentView} />
         </div>
       </div>
       {showConfirmModal && (
         <ConfirmModal
-          message="You have multiple subjects selected. Are you sure you want to turn off multi-tagging? This will clear all selected subjects."
-          confirmText="Turn off multi-tagging"
-          cancelText="Cancel"
+          message={t('confirmTurnOffMultiTag')}
+          confirmText={t('turnOffMultiTagging')}
+          cancelText={t('cancel')}
           onConfirm={handleConfirmTurnOff}
           onCancel={handleCancelTurnOff}
         />
@@ -120,9 +133,11 @@ function AppContent() {
 
 function App() {
   return (
-    <TaggingProvider>
-      <AppContent />
-    </TaggingProvider>
+    <LanguageProvider>
+      <TaggingProvider>
+        <AppContent />
+      </TaggingProvider>
+    </LanguageProvider>
   );
 }
 

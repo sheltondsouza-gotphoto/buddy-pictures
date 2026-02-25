@@ -1,0 +1,52 @@
+.settings-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.settings-section {
+  margin-bottom: 32px;
+}
+
+.settings-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2B2851;
+  margin-bottom: 16px;
+}
+
+.language-selector {
+  display: flex;
+  gap: 12px;
+}
+
+.language-option {
+  flex: 1;
+  padding: 16px;
+  border: 2px solid #E4E4E5;
+  border-radius: 8px;
+  background: white;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2B2851;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-option:hover {
+  border-color: #2B2851;
+  background: #F5F5F6;
+}
+
+.language-option.active {
+  border-color: #2B2851;
+  background: #2B2851;
+  color: white;
+}

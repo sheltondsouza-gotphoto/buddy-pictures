@@ -1,10 +1,14 @@
 import React from 'react';
 import { useTagging } from '../context/TaggingContext';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslation } from '../translations/translations';
 import CountdownTimer from './CountdownTimer';
 import './List.css';
 
 function CurrentlyChosen() {
   const { status, taggingMode, savedSubjects, maxLimit, removeCode, toggleTaggingMode, countdownTimerClearCodes } = useTagging();
+  const { language } = useLanguage();
+  const t = (key, params) => getTranslation(key, language, params);
   
   // Countdown timer is active if: multi-tag is on AND status is NOT empty
   // Inactive if: multi-tag is on AND status is empty
@@ -14,7 +18,7 @@ function CurrentlyChosen() {
   if (status === 'empty' && !taggingMode) {
     return (
       <div className="currently-chosen-section">
-        <p className="currently-chosen-value">No subject selected</p>
+        <p className="currently-chosen-value">{t('noSubjectSelected')}</p>
         
       </div>
       
@@ -25,7 +29,7 @@ function CurrentlyChosen() {
   if (status === 'empty' && taggingMode) {
     return (
       <div className="currently-chosen-section currently-chosen-multi-empty">
-        <p className="currently-chosen-value">No subject selected</p>
+        <p className="currently-chosen-value">{t('noSubjectSelected')}</p>
         <div className='multi-tag-bottom-bar'>
             <div className="multi-tag-capacity">
             <span className="multi-tag-fraction">0/{maxLimit}</span>
@@ -36,7 +40,7 @@ function CurrentlyChosen() {
             <div className="countdown-timer-group">
               <CountdownTimer isActive={isCountdownActive} onComplete={countdownTimerClearCodes} />
             </div>
-            <button className="to-single-tag-button" onClick={toggleTaggingMode}>To single tag</button>
+            <button className="to-single-tag-button" onClick={toggleTaggingMode}>{t('toSingleTag')}</button>
         </div>
       </div>
     );
@@ -49,12 +53,12 @@ function CurrentlyChosen() {
         <div className="single-tag-header">
           <div className="single-tag-content">
             <p className="single-tag-name">{savedSubjects[0].name}</p>
-            <p className="single-tag-status">Active</p>
+            <p className="single-tag-status">{t('active')}</p>
           </div>
           <button 
             className="remove-button" 
             onClick={() => removeCode()}
-            aria-label="Remove"
+            aria-label={t('ariaRemove')}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M18 6L6 18M6 6L18 18" stroke="#2B2851" strokeWidth="2" strokeLinecap="round"/>
@@ -69,7 +73,7 @@ function CurrentlyChosen() {
               <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="#2B2851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="#2B2851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span>To Multi-tag</span>
+            <span>{t('toMultiTag')}</span>
           </button>
         </div>
       </div>
@@ -87,7 +91,7 @@ function CurrentlyChosen() {
               <button 
                 className="remove-button-small" 
                 onClick={() => removeCode(index)}
-                aria-label="Remove"
+                aria-label={t('ariaRemove')}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18 6L6 18M6 6L18 18" stroke="#2B2851" strokeWidth="2" strokeLinecap="round"/>
@@ -117,7 +121,7 @@ function CurrentlyChosen() {
               <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="#2B2851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="#2B2851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span>To Single-tag</span>
+            <span>{t('toSingleTag')}</span>
           </button>
         </div>
       </div>
@@ -127,7 +131,7 @@ function CurrentlyChosen() {
   // Fallback
   return (
     <div className="currently-chosen-section">
-      <p className="currently-chosen-value">No subject selected</p>
+      <p className="currently-chosen-value">{t('noSubjectSelected')}</p>
     </div>
   );
 }

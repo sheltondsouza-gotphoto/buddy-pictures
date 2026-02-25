@@ -24,6 +24,12 @@
   pointer-events: none;
 }
 
+.bottom-nav-item[onclick],
+.bottom-nav-item:has(button) {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
 .bottom-nav-icon {
   display: flex;
   gap: 8px;
