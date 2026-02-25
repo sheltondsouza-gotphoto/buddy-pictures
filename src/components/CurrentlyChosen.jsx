@@ -31,14 +31,18 @@ function CurrentlyChosen() {
       <div className="currently-chosen-section currently-chosen-multi-empty">
         <p className="currently-chosen-value">{t('noSubjectSelected')}</p>
         <div className='multi-tag-bottom-bar'>
-            <div className="multi-tag-capacity">
-            <span className="multi-tag-fraction">0/{maxLimit}</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V5C1 4.46957 1.21071 3.96086 1.58579 3.58579C1.96086 3.21071 2.46957 3 3 3H7L9 1H15L17 3H21C21.5304 3 22.0391 3.21071 22.4142 3.58579C22.7893 3.96086 23 4.46957 23 5V19Z" stroke="#2B2851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            </div>
-            <div className="countdown-timer-group">
-              <CountdownTimer isActive={isCountdownActive} onComplete={countdownTimerClearCodes} />
+        <div className='multi-tag-bottom-bar-left'> 
+          <div className="countdown-timer-group">
+            <CountdownTimer 
+              isActive={isCountdownActive} 
+              onComplete={countdownTimerClearCodes}
+              key={savedSubjects.length}
+            />
+          </div>
+          <div className="multi-tag-capacity">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M720-400v-120H600v-80h120v-120h80v120h120v80H800v120h-80ZM247-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Zm80-80h480v-32q0-11-5.5-20T580-306q-54-27-109-40.5T360-360q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32Zm296.5-343.5Q440-607 440-640t-23.5-56.5Q393-720 360-720t-56.5 23.5Q280-673 280-640t23.5 56.5Q327-560 360-560t56.5-23.5ZM360-640Zm0 400Z"/></svg>
+            <span className="multi-tag-fraction">{savedSubjects.length}/{maxLimit}</span>
+          </div>
             </div>
             <button className="to-single-tag-button" onClick={toggleTaggingMode}>{t('toSingleTag')}</button>
         </div>
@@ -101,6 +105,7 @@ function CurrentlyChosen() {
           ))}
         </div>
         <div className='multi-tag-bottom-bar'>
+          <div className='multi-tag-bottom-bar-left'> 
           <div className="countdown-timer-group">
             <CountdownTimer 
               isActive={isCountdownActive} 
@@ -109,11 +114,11 @@ function CurrentlyChosen() {
             />
           </div>
           <div className="multi-tag-capacity">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V5C1 4.46957 1.21071 3.96086 1.58579 3.58579C1.96086 3.21071 2.46957 3 3 3H7L9 1H15L17 3H21C21.5304 3 22.0391 3.21071 22.4142 3.58579C22.7893 3.96086 23 4.46957 23 5V19Z" stroke="#2B2851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="rgba(43, 40, 81, 0.1);"><path d="M720-400v-120H600v-80h120v-120h80v120h120v80H800v120h-80ZM247-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Zm80-80h480v-32q0-11-5.5-20T580-306q-54-27-109-40.5T360-360q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32Zm296.5-343.5Q440-607 440-640t-23.5-56.5Q393-720 360-720t-56.5 23.5Q280-673 280-640t23.5 56.5Q327-560 360-560t56.5-23.5ZM360-640Zm0 400Z"/></svg>
             <span className="multi-tag-fraction">{savedSubjects.length}/{maxLimit}</span>
           </div>
+            </div>
+         
           <button className="to-single-tag-button" onClick={toggleTaggingMode}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="#2B2851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

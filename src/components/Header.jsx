@@ -3,14 +3,23 @@ import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations/translations';
 import './Header.css';
 
-function Header() {
+function Header({ currentView }) {
   const { language } = useLanguage();
   const t = (key, params) => getTranslation(key, language, params);
+
+  // Determine which title to show based on current view
+  const getTitle = () => {
+    if (currentView === 'settings') {
+      return t('settingsTitle');
+    }
+    // For all other views (jobs, groups, teachers, names), show names list title
+    return t('namesListTitle');
+  };
 
   return (
     <div className="header">
       <div className="header-content">
-        <h1 className="header-title">{t('headerTitle')}</h1>
+        <h1 className="header-title">{getTitle()}</h1>
         <div className="header-actions">
           <button className="icon-button" aria-label={t('ariaAdd')}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -3,15 +3,25 @@ import { useLanguage } from '../context/LanguageContext';
 import { getTranslation } from '../translations/translations';
 import './BottomNavigation.css';
 
-function BottomNavigation({ onSettingsClick, currentView }) {
+function BottomNavigation({ onSettingsClick, onNameListClick, currentView }) {
   const { language } = useLanguage();
   const t = (key, params) => getTranslation(key, language, params);
   const isNameListActive = currentView !== 'settings';
   const isSettingsActive = currentView === 'settings';
 
+  const handleNameListClick = () => {
+    if (currentView === 'settings' && onNameListClick) {
+      onNameListClick();
+    }
+  };
+
   return (
     <div className="bottom-navigation">
-      <div className={`bottom-nav-item ${isNameListActive ? 'active' : ''}`}>
+      <div 
+        className={`bottom-nav-item ${isNameListActive ? 'active' : ''}`}
+        onClick={handleNameListClick}
+        style={{ cursor: currentView === 'settings' ? 'pointer' : 'default', pointerEvents: currentView === 'settings' ? 'auto' : 'none' }}
+      >
         <div className={`bottom-nav-icon ${isNameListActive ? 'active' : ''}`}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="#2B2851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

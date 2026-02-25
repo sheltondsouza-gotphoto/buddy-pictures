@@ -56,16 +56,34 @@ function NamesList({ names, onBack, job, group, teacher }) {
           </button>
         </div>
         <div className="list">
-          {names.map((nameData, index) => (
-            <React.Fragment key={nameData.name}>
-              {index > 0 && <div className="list-divider"></div>}
-              <div className="list-item" onClick={() => handleNameClick(nameData)}>
-                <div className="list-item-text">
-                  <p>{nameData.name}</p>
+          {names.map((nameData, index) => {
+            const isSelected = savedSubjects.some(subject => subject.name === nameData.name);
+            const prevIsSelected = index > 0 && savedSubjects.some(subject => subject.name === names[index - 1]?.name);
+            const nextIsSelected = index < names.length - 1 && savedSubjects.some(subject => subject.name === names[index + 1]?.name);
+            
+            // Show divider above if: not first item, current item not selected, previous item not selected
+            const showDividerAbove = index > 0 && !isSelected && !prevIsSelected;
+            // Show divider below if: not last item, current item not selected, next item not selected
+            const showDividerBelow = index < names.length - 1 && !isSelected && !nextIsSelected;
+            
+            return (
+              <React.Fragment key={nameData.name}>
+                {showDividerAbove && <div className="list-divider"></div>}
+                <div 
+                  className={`list-item ${isSelected ? 'list-item-selected' : ''}`} 
+                  onClick={() => handleNameClick(nameData)}
+                >
+                  <div className="list-item-text">
+                    <p className={isSelected ? 'list-item-name-selected' : ''}>{nameData.name}</p>
+                  </div>
+                  {isSelected && (
+                    <p className="list-item-active">{t('active')}</p>
+                  )}
                 </div>
-              </div>
-            </React.Fragment>
-          ))}
+                {showDividerBelow && <div className="list-divider"></div>}
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
       {showLimitModal && <LimitReachedModal onClose={handleCloseLimitModal} />}

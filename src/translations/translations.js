@@ -1,7 +1,8 @@
 export const translations = {
   en: {
     // Header
-    headerTitle: 'Names List',
+    namesListTitle: 'Names List',
+    settingsTitle: 'Settings',
     
     // Navigation
     nameList: 'Name list',
@@ -34,7 +35,7 @@ export const translations = {
     toastLimitMessage: 'This camera cannot tag more than {max} subjects',
     
     // Settings
-    settingsTitle: 'Settings',
+    
     language: 'Language',
     english: 'English',
     german: 'German',
@@ -48,7 +49,8 @@ export const translations = {
   },
   de: {
     // Header
-    headerTitle: 'Namenliste',
+    namesListTitle: 'Namenliste',
+    settingsTitle: 'Einstellungen',
     
     // Navigation
     nameList: 'Namenliste',
@@ -57,7 +59,7 @@ export const translations = {
     settings: 'Einstellungen',
     
     // Lists
-    entaggedJobs: 'Entagged Jobs',
+    entaggedJobs: 'Entagged Aufträge',
     groups: 'Gruppen',
     teachers: 'Lehrer',
     names: 'Namen',
@@ -81,7 +83,7 @@ export const translations = {
     toastLimitMessage: 'Diese Kamera kann nicht mehr als {max} Personen markieren',
     
     // Settings
-    settingsTitle: 'Einstellungen',
+    
     language: 'Sprache',
     english: 'Englisch',
     german: 'Deutsch',
