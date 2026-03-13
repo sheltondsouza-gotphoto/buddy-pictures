@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/buddy-pictures/static/css/main.a7337d52.css",
-    "main.js": "/buddy-pictures/static/js/main.0f7521d9.js",
+    "main.css": "/buddy-pictures/static/css/main.c210f899.css",
+    "main.js": "/buddy-pictures/static/js/main.42613522.js",
     "static/js/453.6e4f956a.chunk.js": "/buddy-pictures/static/js/453.6e4f956a.chunk.js",
     "static/media/Group.svg": "/buddy-pictures/static/media/Group.9961a9ff6f10fe8877c9ad9f8d43ec48.svg",
     "static/media/Add Customer.svg": "/buddy-pictures/static/media/Add Customer.87084c52015bbc4852393f9133f5f790.svg",
@@ -11,12 +11,12 @@
     "static/media/Edit.svg": "/buddy-pictures/static/media/Edit.a0c482924ffdab7fda021f27f591bb85.svg",
     "static/media/Close.svg": "/buddy-pictures/static/media/Close.e2f343ad97591f38a7f8bafe1712f0a2.svg",
     "static/media/Chevron Left.svg": "/buddy-pictures/static/media/Chevron Left.873b60d4cf1b83aa667ee62bc3504d1b.svg",
-    "main.a7337d52.css.map": "/buddy-pictures/static/css/main.a7337d52.css.map",
-    "main.0f7521d9.js.map": "/buddy-pictures/static/js/main.0f7521d9.js.map",
+    "main.c210f899.css.map": "/buddy-pictures/static/css/main.c210f899.css.map",
+    "main.42613522.js.map": "/buddy-pictures/static/js/main.42613522.js.map",
     "453.6e4f956a.chunk.js.map": "/buddy-pictures/static/js/453.6e4f956a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.a7337d52.css",
-    "static/js/main.0f7521d9.js"
+    "static/css/main.c210f899.css",
+    "static/js/main.42613522.js"
   ]
 }
