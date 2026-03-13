@@ -4,8 +4,18 @@ import groupIcon from '../icons/Single tagging/Group.svg';
 import clearAllIcon from '../icons/Multi-tagging/clear all.svg';
 import colors from '../colors';
 import IconButton from './IconButton';
+import { translations } from '../mockData';
 
-function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onClearSelected, onRemoveSubject }) {
+function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onClearSelected, onRemoveSubject, currentLanguage }) {
+  const translatePictureType = (type) => {
+    switch(type) {
+      case 'Individual': return translations[currentLanguage].filterIndividual;
+      case 'Group': return translations[currentLanguage].filterGroup;
+      case 'Family': return translations[currentLanguage].filterFamily;
+      default: return type;
+    }
+  };
+
   const renderSingleTaggingSelected = (subject) => (
     <div 
       className="border flex items-center justify-between px-3 py-2 rounded-lg w-full"
@@ -27,12 +37,12 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
           className="font-inter font-normal text-xs truncate"
           style={{ color: colors.neutral[700] }}
         >
-          {subject.pictureTypes.join(' + ')}
+          {subject.pictureTypes.map(translatePictureType).join(' + ')}
         </p>
       </div>
       <div className="flex gap-1 items-center shrink-0">
-        <IconButton iconSrc={closeIcon} altText="Close" onClick={() => onRemoveSubject(subject.id)} className="size-[24px] p-0" />
-        <IconButton iconSrc={groupIcon} altText="Group" onClick={onToggleTaggingMode} className="size-[24px] p-0" />
+        <IconButton iconSrc={closeIcon} altText={translations[currentLanguage].subjectCardClose} onClick={() => onRemoveSubject(subject.id)} className="size-10" />
+        <IconButton iconSrc={groupIcon} altText={translations[currentLanguage].subjectCardGroup} onClick={onToggleTaggingMode} className="size-10" />
       </div>
     </div>
   );
@@ -51,7 +61,7 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
         className="font-inter font-normal text-sm text-center flex-1"
         style={{ color: colors.neutral[800] }}
       >
-        No subject selected
+        {translations[currentLanguage].subjectCardNoSubject}
       </p>
       
     </div>
@@ -75,7 +85,7 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
             <div className="flex flex-col gap-1 flex-1 min-w-0">
               {subjects.map((subject, index) => (
                 <div key={index} className="flex gap-1 items-center py-1 w-full">
-                  <IconButton iconSrc={closeIcon} altText="Close" onClick={() => onRemoveSubject(subject.id)} className="size-[24px] p-0 shrink-0" />
+                  <IconButton iconSrc={closeIcon} altText={translations[currentLanguage].subjectCardClose} onClick={() => onRemoveSubject(subject.id)} className="size-10" />
                   <p 
                     className="font-inter font-bold text-base flex-1 truncate"
                     style={{ color: colors.communication.successText }}
@@ -86,12 +96,12 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
               ))}
             </div>
             <div className="flex gap-1 items-center shrink-0">
-              <IconButton iconSrc={clearAllIcon} altText="Clear All" onClick={onClearSelected} className="size-[24px] p-0" />
+              <IconButton iconSrc={clearAllIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClearSelected} className="size-10" />
               <IconButton 
                 iconSrc={groupIcon} 
-                altText="Group" 
+                altText={translations[currentLanguage].subjectCardGroup} 
                 onClick={onToggleTaggingMode}
-                className="size-[24px] p-0"
+                className="size-10"
                 style={{ backgroundColor: colors.neutral[800] }}
                 iconColor={colors.main.white}
               />
@@ -106,12 +116,12 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
               {subjects[0].name}
             </p>
             <div className="flex gap-1 items-center shrink-0">
-              <IconButton iconSrc={clearAllIcon} altText="Clear All" onClick={onClearSelected} className="size-[24px] p-0" />
+              <IconButton iconSrc={clearAllIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClearSelected} className="size-10" />
               <IconButton 
                 iconSrc={groupIcon} 
-                altText="Group" 
+                altText={translations[currentLanguage].subjectCardGroup} 
                 onClick={onToggleTaggingMode}
-                className="size-[24px] p-0"
+                className="size-10"
                 style={{ backgroundColor: colors.neutral[800] }}
                 iconColor={colors.main.white}
               />
@@ -139,12 +149,12 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
         No subject selected
       </p>
       <div className="flex gap-1 items-center shrink-0">
-        <IconButton iconSrc={clearAllIcon} altText="Clear All" onClick={onClearSelected} className="size-[24px] p-0 opacity-40" />
+        <IconButton iconSrc={clearAllIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClearSelected} className="size-10 opacity-40" />
         <IconButton 
           iconSrc={groupIcon} 
-          altText="Group" 
+          altText={translations[currentLanguage].subjectCardGroup} 
           onClick={onToggleTaggingMode}
-          className="size-[24px] p-0"
+          className="size-10"
           style={{ backgroundColor: colors.neutral[800] }}
           iconColor={colors.main.white}
         />

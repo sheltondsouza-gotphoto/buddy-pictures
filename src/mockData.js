@@ -49,12 +49,12 @@ const mockSubjects = [
 ];
 
 const mockFilters = [
-  { id: 'all', label: 'All' },
-  { id: 'toDo', label: 'To do' },
-  { id: 'absentees', label: 'Absentees' },
-  { id: 'individual', label: 'Individual' },
-  { id: 'group', label: 'Group' },
-  { id: 'family', label: 'Family' },
+  { id: 'all', labelKey: 'filterAll' },
+  { id: 'toDo', labelKey: 'filterToDo' },
+  { id: 'absentees', labelKey: 'filterAbsentees' },
+  { id: 'individual', labelKey: 'filterIndividual' },
+  { id: 'group', labelKey: 'filterGroup' },
+  { id: 'family', labelKey: 'filterFamily' },
 ];
 
 const mockTaggingModes = {
@@ -62,4 +62,65 @@ const mockTaggingModes = {
   multi: 'multi',
 };
 
-export { mockUserData, mockSubjects, mockFilters, mockTaggingModes };
+const translations = {
+  en: {
+    statusBarName: 'M 3284791',
+    subjectsTitle: 'Subjects',
+    maxCodesToast: 'This camera only accepts a max of 3 codes',
+    switchModeModalTitle: 'Names will be deleted',
+    switchModeModalText: 'Do not show again',
+    switchModeModalCancel: 'Cancel',
+    switchModeModalConfirm: 'Continue',
+    settingsTitle: 'Settings',
+    settingsLanguage: 'Language:',
+    settingsBack: 'Back',
+    nameListTab: 'Name list',
+    scanCodeTab: 'Scan code',
+    devicesTab: 'Devices',
+    settingsTab: 'Settings',
+    filterAll: 'All',
+    filterToDo: 'To do',
+    filterAbsentees: 'Absentees',
+    filterIndividual: 'Individual',
+    filterGroup: 'Group',
+    filterFamily: 'Family',
+    subjectCardNoSubject: 'No subject selected',
+    subjectCardClose: 'Close',
+    subjectCardGroup: 'Group',
+    subjectCardClearAll: 'Clear All',
+    modalOk: 'OK',
+    edit: 'Edit',
+    addCustomer: 'Add Customer',
+  },
+  de: {
+    statusBarName: 'M 3284791',
+    subjectsTitle: 'Personen',
+    maxCodesToast: 'Diese Kamera akzeptiert maximal 3 Codes',
+    switchModeModalTitle: 'Namen werden gelöscht',
+    switchModeModalText: 'Nicht erneut anzeigen',
+    switchModeModalCancel: 'Abbrechen',
+    switchModeModalConfirm: 'Fortfahren',
+    settingsTitle: 'Einstellungen',
+    settingsLanguage: 'Sprache:',
+    settingsBack: 'Zurück',
+    nameListTab: 'Namensliste',
+    scanCodeTab: 'Code scannen',
+    devicesTab: 'Geräte',
+    settingsTab: 'Einstellungen',
+    filterAll: 'Alle',
+    filterToDo: 'Zu erledigen',
+    filterAbsentees: 'Abwesende',
+    filterIndividual: 'Einzeln',
+    filterGroup: 'Gruppe',
+    filterFamily: 'Familie',
+    subjectCardNoSubject: 'Kein person ausgewählt',
+    subjectCardClose: 'Schließen',
+    subjectCardGroup: 'Gruppe',
+    subjectCardClearAll: 'Alles löschen',
+    modalOk: 'OK',
+    edit: 'Bearbeiten',
+    addCustomer: 'Person hinzufügen',
+  },
+};
+
+export { mockUserData, mockSubjects, mockFilters, mockTaggingModes, translations };

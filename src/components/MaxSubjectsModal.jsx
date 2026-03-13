@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import colors from '../colors';
 
-function MaxSubjectsModal({ isOpen, onClose, onDoNotShowAgain }) {
+import { translations } from '../mockData';
+
+function MaxSubjectsModal({ isOpen, onClose, onDoNotShowAgain, currentLanguage }) {
   const [doNotShowAgain, setDoNotShowAgain] = useState(false);
 
   if (!isOpen) return null;
@@ -28,7 +30,7 @@ function MaxSubjectsModal({ isOpen, onClose, onDoNotShowAgain }) {
           className="font-inter font-semibold text-base"
           style={{ color: colors.neutral[800] }}
         >
-          This is the maximum for your camera
+          {translations[currentLanguage].maxCodesToast}
         </p>
         
         <label className="flex items-center gap-2 cursor-pointer">
@@ -47,7 +49,7 @@ function MaxSubjectsModal({ isOpen, onClose, onDoNotShowAgain }) {
             className="font-inter font-normal text-sm"
             style={{ color: colors.neutral[700] }}
           >
-            Do not show again
+            {translations[currentLanguage].switchModeModalText}
           </span>
         </label>
 
@@ -65,7 +67,7 @@ function MaxSubjectsModal({ isOpen, onClose, onDoNotShowAgain }) {
             e.currentTarget.style.backgroundColor = colors.interaction.highlight;
           }}
         >
-          OK
+          {translations[currentLanguage].modalOk}
         </button>
       </div>
     </div>

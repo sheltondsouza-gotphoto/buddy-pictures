@@ -14,7 +14,7 @@ function IconButton({ onClick, iconSrc, altText = '', className = '', style = {}
   
   return (
     <div 
-      className={`flex items-center justify-center p-1 rounded-[40px] shrink-0 size-8 cursor-pointer transition-colors ${className}`}
+      className={`flex items-center justify-center p-1 rounded-[40px] shrink-0 size-10 cursor-pointer transition-colors ${className}`}
       onClick={onClick}
       style={defaultStyle}
       onMouseEnter={(e) => {

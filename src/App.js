@@ -8,7 +8,8 @@ import BottomNavigationBar from './components/BottomNavigationBar';
 import MaxSubjectsModal from './components/MaxSubjectsModal';
 import SwitchModeModal from './components/SwitchModeModal';
 import Toast from './components/Toast';
-import { mockSubjects, mockFilters, mockTaggingModes } from './mockData';
+import { mockSubjects, mockFilters, mockTaggingModes, translations } from './mockData';
+import SettingsPage from './components/SettingsPage';
 import searchIcon from './icons/Single tagging/Search.svg';
 import './index.css'; // Import Tailwind CSS
 import './typography.css'; // Import custom typography
@@ -16,6 +17,7 @@ import colors from './colors';
 
 const DO_NOT_SHOW_MAX_SUBJECTS_KEY = 'doNotShowMaxSubjectsModal';
 const DO_NOT_SHOW_SWITCH_MODE_KEY = 'doNotShowSwitchModeModal';
+const LANGUAGE_KEY = 'appLanguage';
 
 function App() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -24,6 +26,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('nameList');
   // eslint-disable-next-line no-unused-vars
   const [isTabletView] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(localStorage.getItem(LANGUAGE_KEY) || 'en');
   const [showMaxSubjectsModal, setShowMaxSubjectsModal] = useState(false);
   const [doNotShowMaxSubjectsModal, setDoNotShowMaxSubjectsModal] = useState(false);
   const [showSwitchModeModal, setShowSwitchModeModal] = useState(false);
@@ -42,8 +45,17 @@ function App() {
     }
   }, []);
 
+  const handleLanguageChange = (lang) => {
+    setCurrentLanguage(lang);
+    localStorage.setItem(LANGUAGE_KEY, lang);
+  };
+
   const handleFilterChange = (filterId) => {
-    setActiveFilter(filterId);
+    if (activeFilter === filterId) {
+      setActiveFilter('all');
+    } else {
+      setActiveFilter(filterId);
+    }
   };
 
   const handleSubjectSelect = (subjectId) => {
@@ -140,60 +152,77 @@ function App() {
       className={`min-h-screen flex flex-col items-center shadow-elevation-shadow-sm justify-between ${isTabletView ? 'w-tablet' : 'w-phone'}`}
       style={{ backgroundColor: colors.neutral[50] }}
     >
-      <AppHeader />
-      <StatusBar name={`M 3284791`} />
-      <div 
-        className="flex flex-col gap-2 h-full items-start overflow-clip p-16 relative w-full flex-1"
-        style={{ backgroundColor: colors.background.lightGray }}
-      >
-        <SubjectCard 
-          taggingMode={taggingMode} 
-          selectedSubjects={selectedSubjects} 
-          onToggleTaggingMode={toggleTaggingMode}
-          onClearSelected={clearSelectedSubjects}
-          onRemoveSubject={removeSubject}
+      <AppHeader currentLanguage={currentLanguage} />
+      {activeTab === 'settings' ? (
+        <SettingsPage 
+          currentLanguage={currentLanguage} 
+          onLanguageChange={handleLanguageChange} 
+          onNavigateBack={() => setActiveTab('nameList')}
         />
-        <div 
-          className="flex flex-col gap-4 items-start overflow-clip p-16 relative rounded-[16px] w-full"
-          style={{ 
-            backgroundColor: colors.neutral[0] || colors.main.white,
-            border: `1px solid ${colors.neutral[200]}`
-          }}
-        >
-          <div className="flex flex-col gap-2 items-start relative w-full">
-            <div className="flex flex-col gap-3 items-start relative w-full">
-              <div className="flex gap-3 items-center justify-between relative w-full">
-                <p 
-                  className="font-inter font-semibold text-base leading-[1.4] tracking-[0.1px] whitespace-nowrap"
-                  style={{ color: colors.neutral[800] }}
-                >
-                  Subjects
-                </p>
-                <div className="flex gap-2 items-center justify-center p-1 relative rounded-[40px] shrink-0 size-8">
-                  <div className="relative size-6">
-                    <img alt="Search" className="absolute block max-w-none size-full" src={searchIcon} />
+      ) : (
+        <>
+          <StatusBar name={translations[currentLanguage].statusBarName} />
+          <div 
+            className="flex flex-col gap-2 h-full items-start overflow-clip p-16 relative w-full flex-1"
+            style={{ backgroundColor: colors.background.lightGray }}
+          >
+            <SubjectCard 
+              taggingMode={taggingMode} 
+              selectedSubjects={selectedSubjects} 
+              onToggleTaggingMode={toggleTaggingMode}
+              onClearSelected={clearSelectedSubjects}
+              onRemoveSubject={removeSubject}
+              currentLanguage={currentLanguage}
+            />
+            <div 
+              className="flex flex-col gap-4 items-start overflow-clip p-16 relative rounded-[16px] w-full"
+              style={{ 
+                backgroundColor: colors.neutral[0] || colors.main.white,
+                border: `1px solid ${colors.neutral[200]}`
+              }}
+            >
+              <div className="flex flex-col gap-2 items-start relative w-full">
+                <div className="flex flex-col gap-3 items-start relative w-full">
+                  <div className="flex gap-3 items-center justify-between relative w-full">
+                    <p 
+                      className="font-inter font-semibold text-base leading-[1.4] tracking-[0.1px] whitespace-nowrap"
+                      style={{ color: colors.neutral[800] }}
+                    >
+                      {translations[currentLanguage].subjectsTitle}
+                    </p>
+                    <div className="flex gap-2 items-center justify-center p-1 relative rounded-[40px] shrink-0 size-8">
+                      <div className="relative size-6">
+                        <img alt="Search" className="absolute block max-w-none size-full" src={searchIcon} />
+                      </div>
+                    </div>
                   </div>
                 </div>
+                <SubjectFilterTabs 
+                  filters={mockFilters} 
+                  activeFilter={activeFilter} 
+                  onFilterChange={handleFilterChange} 
+                  currentLanguage={currentLanguage}
+                />
               </div>
+              <SubjectList 
+                subjects={filteredSubjects} 
+                activeSubjectId={selectedSubjects[0]?.id} 
+                selectedSubjectIds={selectedSubjects.map(sub => sub.id)}
+                onSubjectSelect={handleSubjectSelect} 
+              />
             </div>
-            <SubjectFilterTabs filters={mockFilters} activeFilter={activeFilter} onFilterChange={handleFilterChange} />
           </div>
-          <SubjectList 
-            subjects={filteredSubjects} 
-            activeSubjectId={selectedSubjects[0]?.id} 
-            selectedSubjectIds={selectedSubjects.map(sub => sub.id)}
-            onSubjectSelect={handleSubjectSelect} 
-          />
-        </div>
-      </div>
-      <BottomNavigationBar activeItem={activeTab} onNavigate={setActiveTab} className="fixed bottom-0" />
+        </>
+      )}
+      <BottomNavigationBar activeItem={activeTab} onNavigate={setActiveTab} currentLanguage={currentLanguage} className="fixed bottom-0" />
       <MaxSubjectsModal 
         isOpen={showMaxSubjectsModal}
         onClose={handleCloseMaxSubjectsModal}
         onDoNotShowAgain={handleDoNotShowAgain}
+        currentLanguage={currentLanguage}
       />
       <Toast 
-        message="this camera only accepts a max of 3 codes"
+        message={translations[currentLanguage].maxCodesToast}
         isVisible={showToast}
         onClose={() => setShowToast(false)}
       />
@@ -202,6 +231,7 @@ function App() {
         onClose={handleSwitchModeCancel}
         onConfirm={handleSwitchModeConfirm}
         onDoNotShowAgain={handleDoNotShowSwitchMode}
+        currentLanguage={currentLanguage}
       />
     </div>
   );

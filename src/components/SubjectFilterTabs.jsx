@@ -1,4 +1,5 @@
 import colors from '../colors';
+import { translations } from '../mockData';
 
 function Chips({ label, isActive, onClick }) {
   return (
@@ -12,7 +13,14 @@ function Chips({ label, isActive, onClick }) {
         borderStyle: 'solid'
       }}
     >
-      <div className="flex items-center justify-center px-2 relative shrink-0">
+      <div 
+        className="flex items-center justify-center px-2 relative shrink-0"
+        style={{
+          height: 'fit-content',
+          paddingTop: '4px',
+          paddingBottom: '4px'
+        }}
+      >
         <p 
           className="font-inter font-semibold leading-normal relative shrink-0 text-sm text-center tracking-normal whitespace-nowrap"
           style={{ color: isActive ? (colors.neutral[0] || colors.main.white) : colors.neutral[700] }}
@@ -24,14 +32,14 @@ function Chips({ label, isActive, onClick }) {
   );
 }
 
-function SubjectFilterTabs({ filters, activeFilter, onFilterChange }) {
+function SubjectFilterTabs({ filters, activeFilter, onFilterChange, currentLanguage }) {
   return (
-    <div className="flex items-center relative shrink-0 w-full">
-      <div className="flex gap-2 items-center relative p-8">
+    <div className="flex items-center relative shrink-0 w-full overflow-x-auto no-scrollbar">
+      <div className="flex gap-2 items-center relative p-8 min-w-max">
         {filters.map((filter) => (
           <Chips
             key={filter.id}
-            label={filter.label}
+            label={translations[currentLanguage][filter.labelKey]}
             isActive={activeFilter === filter.id}
             onClick={() => onFilterChange(filter.id)}
           />

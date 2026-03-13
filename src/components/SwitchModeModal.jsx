@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import colors from '../colors';
 
-function SwitchModeModal({ isOpen, onClose, onConfirm, onDoNotShowAgain }) {
+import { translations } from '../mockData';
+
+function SwitchModeModal({ isOpen, onClose, onConfirm, onDoNotShowAgain, currentLanguage }) {
   const [doNotShowAgain, setDoNotShowAgain] = useState(false);
 
   if (!isOpen) return null;
@@ -33,7 +35,7 @@ function SwitchModeModal({ isOpen, onClose, onConfirm, onDoNotShowAgain }) {
           className="font-inter font-semibold text-base"
           style={{ color: colors.neutral[800] }}
         >
-          Names will be deleted
+          {translations[currentLanguage].switchModeModalTitle}
         </p>
         
         <label className="flex items-center gap-2 cursor-pointer">
@@ -52,7 +54,7 @@ function SwitchModeModal({ isOpen, onClose, onConfirm, onDoNotShowAgain }) {
             className="font-inter font-normal text-sm"
             style={{ color: colors.neutral[700] }}
           >
-            Do not show again
+            {translations[currentLanguage].switchModeModalText}
           </span>
         </label>
 
@@ -71,7 +73,7 @@ function SwitchModeModal({ isOpen, onClose, onConfirm, onDoNotShowAgain }) {
               e.currentTarget.style.backgroundColor = colors.neutral[200];
             }}
           >
-            Cancel
+            {translations[currentLanguage].switchModeModalCancel}
           </button>
           <button
             onClick={handleConfirm}
@@ -87,7 +89,7 @@ function SwitchModeModal({ isOpen, onClose, onConfirm, onDoNotShowAgain }) {
               e.currentTarget.style.backgroundColor = colors.interaction.highlight;
             }}
           >
-            Continue
+            {translations[currentLanguage].switchModeModalConfirm}
           </button>
         </div>
       </div>

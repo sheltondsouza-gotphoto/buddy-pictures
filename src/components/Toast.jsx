@@ -16,7 +16,7 @@ function Toast({ message, isVisible, onClose, duration = 3000 }) {
 
   return (
     <div 
-      className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"
+      className="fixed bottom-16 left-1/2 transform -translate-x-1/2 z-50"
       style={{ animation: 'slideDown 0.3s ease-out' }}
     >
       <div 
