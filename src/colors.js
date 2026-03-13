@@ -1,0 +1,56 @@
+const colors = {
+  main: {
+    text: '#2B2851',
+    secondary: '#43495f',
+    medium: '#979fad',
+    light: '#edf0f6',
+    white: '#ffffff',
+  },
+  interaction: {
+    main: '#2B2851',
+    highlight: '#4b55e3',
+    pressed: '#5e6bf2',
+    buttonHover: '#edf0f6',
+    buttonPressed: '#e0e3e9',
+  },
+  communication: {
+    critical: '#e2213e',
+    criticalBg: '#f9e7e7',
+    criticalText: '#a02a3a',
+    criticalHover: '#c51f33',
+    success: '#01884e',
+    successBg: '#e0f5eb',
+    successText: '#006f40',
+    attention: '#e28200',
+    attentionBg: '#f9f0e0',
+    attentionText: '#a05e01',
+    information: '#276b9d',
+    informationOverlay: '#e7eff9',
+    uiBg: '#ece7f9',
+    uiMain: '#6a2b9d',
+    uiHoverShade: '#7c3ed0',
+    uiHighlightShade: '#4e55e3',
+  },
+  background: {
+    darkGray: '#5c6375',
+    lightBlue: '#e7eff9',
+    lightGray: '#f1f3f7',
+  },
+  text: {
+    link: '#2b2d6a',
+  },
+  neutral: {
+    50: '#EEEEF1',
+    100: '#F2F1F4',
+    200: '#E6E5EA',
+    300: '#E4E4E5',
+    400: '#B1B1BA',
+    500: '#8E8D9B',
+    600: '#71717D',
+    700: '#565569',
+    800: '#494954',
+    900: '#363640',
+  },
+};
+
+export default colors;

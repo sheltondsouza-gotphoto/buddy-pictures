@@ -1,0 +1,32 @@
+:root {
+  /* Font Family */
+  --font-inter: 'Inter', sans-serif;
+
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 450;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Font Sizes and Line Heights */
+  --font-size-20: 20px; /* Heading/Small */
+  --font-line-height-28: 1.4; /* For 20px font size, line height is 28px (1.4 * 20) */
+  --font-size-16: 16px; /* Body/Large, Body/Large Strong, Heading/Extra Small */
+  --font-line-height-22: 1.4; /* For 16px font size, line height is 22.4px (1.4 * 16) */
+  --font-size-14: 14px; /* Body/Medium, Body/Medium Strong */
+  --font-line-height-20: 1.4; /* For 14px font size, line height is 19.6px (1.4 * 14) */
+  --font-size-12: 12px; /* Body/Small, Body/Small Strong */
+  --font-line-height-18: 1.5; /* For 12px font size, line height is 18px (1.5 * 12) */
+
+  /* Letter Spacing */
+  --font-letter-spacing-0-1: 0.1px;
+  --font-letter-spacing-0-2: 0.2px;
+
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+};
