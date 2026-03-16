@@ -100,21 +100,24 @@ function App() {
 
   const toggleTaggingMode = () => {
     const isCurrentlyMulti = taggingMode === mockTaggingModes.multi;
-    const isSwitchingToSingle = isCurrentlyMulti;
-    const hasSelectedSubjects = selectedSubjects.length > 0;
 
-    // If switching from multi to single and there are selected subjects, show modal
-    if (isSwitchingToSingle && hasSelectedSubjects && !doNotShowSwitchModeModal) {
-      setPendingModeSwitch(mockTaggingModes.single);
-      setShowSwitchModeModal(true);
-    } else {
-      // Switch mode immediately
-      const newMode = isCurrentlyMulti ? mockTaggingModes.single : mockTaggingModes.multi;
-      setTaggingMode(newMode);
-      // Clear selected subjects when switching to single mode
-      if (newMode === mockTaggingModes.single) {
-        setSelectedSubjects([]);
+    if (isCurrentlyMulti) {
+      // Switching from multi to single
+      if (selectedSubjects.length > 1) {
+        if (!doNotShowSwitchModeModal) {
+          setPendingModeSwitch(mockTaggingModes.single);
+          setShowSwitchModeModal(true);
+        } else {
+          setTaggingMode(mockTaggingModes.single);
+          setSelectedSubjects([]); // Clear them since they bypassed the modal
+        }
+      } else {
+        // 0 or 1 subject selected, switch immediately without clearing
+        setTaggingMode(mockTaggingModes.single);
       }
+    } else {
+      // Switching from single to multi
+      setTaggingMode(mockTaggingModes.multi);
     }
   };
 
