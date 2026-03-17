@@ -7,6 +7,7 @@ import IconButton from './IconButton';
 import { translations } from '../mockData';
 
 function AppHeader({ currentLanguage }) {
+  console.log('[AppHeader] Rendering, IconButton type:', typeof IconButton, 'chevronLeftIcon:', typeof chevronLeftIcon);
   return (
     <div 
       className="flex flex-nowrap gap-5 h-14 items-center px-4 py-3 shrink-0 w-full z-50 shadow-[0px_1px_4px_0px_rgba(43,40,81,0.06),0px_2px_6px_0px_rgba(43,40,81,0.04)]"

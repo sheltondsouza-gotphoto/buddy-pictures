@@ -1,7 +1,8 @@
 import React from 'react';
 import SubjectListItem from './SubjectListItem';
 
-function SubjectList({ subjects, activeSubjectId, selectedSubjectIds = [], onSubjectSelect }) {
+function SubjectList({ subjects, activeSubjectId, selectedSubjectIds = [], doneSubjectIds = [], onSubjectSelect, getSubjectRegistration }) {
+  console.log('[SubjectList] Rendering, SubjectListItem type:', typeof SubjectListItem);
   // Support both single (activeSubjectId) and multi-select (selectedSubjectIds)
   const isSubjectActive = (subjectId) => {
     if (selectedSubjectIds.length > 0) {
@@ -17,7 +18,9 @@ function SubjectList({ subjects, activeSubjectId, selectedSubjectIds = [], onSub
           key={subject.id}
           subject={subject}
           isActive={isSubjectActive(subject.id)}
+          isDone={doneSubjectIds.includes(subject.id) && !isSubjectActive(subject.id)}
           onClick={() => onSubjectSelect(subject.id)}
+          registration={getSubjectRegistration(subject)}
         />
       ))}
     </div>

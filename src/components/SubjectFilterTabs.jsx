@@ -33,6 +33,7 @@ function Chips({ label, isActive, onClick }) {
 }
 
 function SubjectFilterTabs({ filters, activeFilter, onFilterChange, currentLanguage }) {
+  console.log('[SubjectFilterTabs] Rendering');
   return (
     <div className="flex items-center relative shrink-0 w-full overflow-x-auto no-scrollbar">
       <div className="flex gap-2 items-center relative p-8 min-w-max">

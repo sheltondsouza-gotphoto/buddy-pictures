@@ -7,6 +7,7 @@ import IconButton from './IconButton';
 import { translations } from '../mockData';
 
 function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onClearSelected, onRemoveSubject, currentLanguage }) {
+  console.log('[SubjectCard] Rendering, IconButton type:', typeof IconButton);
   const translatePictureType = (type) => {
     switch(type) {
       case 'Individual': return translations[currentLanguage].filterIndividual;

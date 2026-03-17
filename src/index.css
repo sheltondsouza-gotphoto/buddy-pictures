@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure document and root take full height so content is visible */
+html,
+body,
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body {
+  margin: 0;
+}
+
 /* The @theme block is removed as colors and typography are now handled via Tailwind config and CSS variables. */
 
 @keyframes slideDown {

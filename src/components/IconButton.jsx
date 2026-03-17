@@ -2,6 +2,7 @@ import React from 'react';
 import colors from '../colors';
 
 function IconButton({ onClick, iconSrc, altText = '', className = '', style = {}, iconStyle = {}, iconColor = colors.interaction.main }) {
+  console.log('[IconButton] Rendering, iconSrc type:', typeof iconSrc, typeof iconSrc === 'object' && iconSrc?.default ? '(has .default)' : '');
   const defaultStyle = { backgroundColor: 'transparent', ...style };
   const hasBgColor = style && style.backgroundColor;
   

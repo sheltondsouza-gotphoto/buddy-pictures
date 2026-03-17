@@ -1,25 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import AppHeader from './components/AppHeader';
-import StatusBar from './components/StatusBar';
-import SubjectCard from './components/SubjectCard';
-import SubjectFilterTabs from './components/SubjectFilterTabs';
-import SubjectList from './components/SubjectList';
-import BottomNavigationBar from './components/BottomNavigationBar';
-import MaxSubjectsModal from './components/MaxSubjectsModal';
-import SwitchModeModal from './components/SwitchModeModal';
-import Toast from './components/Toast';
+import React, { useState, useEffect, useRef } from 'react';
+import AppHeaderMod from './components/AppHeader';
+import StatusBarMod from './components/StatusBar';
+import SubjectCardMod from './components/SubjectCard';
+import SubjectFilterTabsMod from './components/SubjectFilterTabs';
+import SubjectListMod from './components/SubjectList';
+import BottomNavigationBarMod from './components/BottomNavigationBar';
+import MaxSubjectsModalMod from './components/MaxSubjectsModal';
+import SwitchModeModalMod from './components/SwitchModeModal';
+import ToastMod from './components/Toast';
 import { mockSubjects, mockFilters, mockTaggingModes, translations } from './mockData';
-import SettingsPage from './components/SettingsPage';
+import SettingsPageMod from './components/SettingsPage';
 import searchIcon from './icons/Single tagging/Search.svg';
 import './index.css'; // Import Tailwind CSS
 import './typography.css'; // Import custom typography
 import colors from './colors';
+
+console.log('[App.jsx] MODULE LOADING - top of file');
+
+// Resolve default exports (fixes "Element type is invalid: got object" from mixed default/named exports)
+const AppHeader = AppHeaderMod?.default ?? AppHeaderMod;
+const StatusBar = StatusBarMod?.default ?? StatusBarMod;
+const SubjectCard = SubjectCardMod?.default ?? SubjectCardMod;
+const SubjectFilterTabs = SubjectFilterTabsMod?.default ?? SubjectFilterTabsMod;
+const SubjectList = SubjectListMod?.default ?? SubjectListMod;
+const BottomNavigationBar = BottomNavigationBarMod?.default ?? BottomNavigationBarMod;
+const MaxSubjectsModal = MaxSubjectsModalMod?.default ?? MaxSubjectsModalMod;
+const SwitchModeModal = SwitchModeModalMod?.default ?? SwitchModeModalMod;
+const Toast = ToastMod?.default ?? ToastMod;
+const SettingsPage = SettingsPageMod?.default ?? SettingsPageMod;
+
+// Debug: log component types to find invalid element (object instead of function)
+console.log('[App.jsx] Component types:', {
+  AppHeader: typeof AppHeader,
+  StatusBar: typeof StatusBar,
+  SubjectCard: typeof SubjectCard,
+  SubjectFilterTabs: typeof SubjectFilterTabs,
+  SubjectList: typeof SubjectList,
+  BottomNavigationBar: typeof BottomNavigationBar,
+  MaxSubjectsModal: typeof MaxSubjectsModal,
+  SwitchModeModal: typeof SwitchModeModal,
+  Toast: typeof Toast,
+  SettingsPage: typeof SettingsPage,
+  searchIcon: typeof searchIcon,
+});
+
 
 const DO_NOT_SHOW_MAX_SUBJECTS_KEY = 'doNotShowMaxSubjectsModal';
 const DO_NOT_SHOW_SWITCH_MODE_KEY = 'doNotShowSwitchModeModal';
 const LANGUAGE_KEY = 'appLanguage';
 
 function App() {
+  console.log('[App.jsx] App() rendering...');
+
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [taggingMode, setTaggingMode] = useState(mockTaggingModes.single);
@@ -34,6 +66,11 @@ function App() {
   const [pendingModeSwitch, setPendingModeSwitch] = useState(null);
   const [showToast, setShowToast] = useState(false);
 
+  const [doneSubjectIds, setDoneSubjectIds] = useState([]);
+  const [headersVisible, setHeadersVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const scrollThreshold = 10;
+
   useEffect(() => {
     const storedPreference = localStorage.getItem(DO_NOT_SHOW_MAX_SUBJECTS_KEY);
     if (storedPreference === 'true') {
@@ -44,6 +81,24 @@ function App() {
       setDoNotShowSwitchModeModal(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'nameList') {
+      setHeadersVisible(true);
+      return;
+    }
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY.current) {
+        setHeadersVisible(true);
+      } else if (currentScrollY > lastScrollY.current && currentScrollY > scrollThreshold) {
+        setHeadersVisible(false);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeTab]);
 
   const handleLanguageChange = (lang) => {
     setCurrentLanguage(lang);
@@ -63,12 +118,18 @@ function App() {
     if (!subject) return;
 
     if (taggingMode === mockTaggingModes.single) {
+      if (!doneSubjectIds.includes(subjectId)) {
+        setDoneSubjectIds([...doneSubjectIds, subjectId]);
+      }
       setSelectedSubjects(selectedSubjects[0]?.id === subjectId ? [] : [subject]);
     } else if (taggingMode === mockTaggingModes.multi) {
       const isAlreadySelected = selectedSubjects.some(sub => sub.id === subjectId);
       if (isAlreadySelected) {
         setSelectedSubjects(selectedSubjects.filter(sub => sub.id !== subjectId));
       } else if (selectedSubjects.length < 3) {
+        if (!doneSubjectIds.includes(subjectId)) {
+          setDoneSubjectIds([...doneSubjectIds, subjectId]);
+        }
         if (selectedSubjects.length === 2 && !doNotShowMaxSubjectsModal) {
           setShowMaxSubjectsModal(true);
         }
@@ -150,25 +211,49 @@ function App() {
     return true;
   });
 
+  console.log('[App.jsx] About to return JSX, activeTab:', activeTab);
+
+  const headerHeight = 93;
+
   return (
     <div 
       className={`min-h-screen flex flex-col items-center shadow-elevation-shadow-sm justify-between ${isTabletView ? 'w-tablet' : 'w-phone'}`}
       style={{ backgroundColor: colors.neutral[50] }}
     >
-      <AppHeader currentLanguage={currentLanguage} />
+      <div
+        className="fixed top-0 left-0 right-0 z-50 flex justify-center transition-transform duration-300 ease-out"
+        style={{
+          transform: (activeTab === 'settings' || headersVisible) ? 'translateY(0)' : 'translateY(-100%)',
+        }}
+      >
+        <div className="w-full mx-auto bg-white">
+          {console.log('[App.jsx] Rendering AppHeader...')}
+          <AppHeader currentLanguage={currentLanguage} />
+          {activeTab !== 'settings' && (
+            <>
+              {console.log('[App.jsx] Rendering StatusBar...')}
+              <StatusBar name={translations[currentLanguage].statusBarName} />
+            </>
+          )}
+        </div>
+      </div>
       {activeTab === 'settings' ? (
-        <SettingsPage 
-          currentLanguage={currentLanguage} 
-          onLanguageChange={handleLanguageChange} 
-          onNavigateBack={() => setActiveTab('nameList')}
-        />
+        <>
+          <div style={{ height: 56, flexShrink: 0 }} aria-hidden="true" />
+          <SettingsPage 
+            currentLanguage={currentLanguage} 
+            onLanguageChange={handleLanguageChange}
+            onNavigateBack={() => setActiveTab('nameList')}
+          />
+        </>
       ) : (
         <>
-          <StatusBar name={translations[currentLanguage].statusBarName} />
+          <div style={{ height: headerHeight, flexShrink: 0 }} aria-hidden="true" />
           <div 
-            className="flex flex-col gap-2 h-full items-start overflow-clip p-16 relative w-full flex-1"
+            className="sticky top-0 z-10 w-full shrink-0"
             style={{ backgroundColor: colors.background.lightGray }}
           >
+            {console.log('[App.jsx] Rendering SubjectCard...')}
             <SubjectCard 
               taggingMode={taggingMode} 
               selectedSubjects={selectedSubjects} 
@@ -177,6 +262,11 @@ function App() {
               onRemoveSubject={removeSubject}
               currentLanguage={currentLanguage}
             />
+          </div>
+          <div 
+            className="flex flex-col gap-2 h-full items-start overflow-clip p-16 relative w-full flex-1"
+            style={{ backgroundColor: colors.background.lightGray }}
+          >
             <div 
               className="flex flex-col gap-4 items-start overflow-clip p-16 relative rounded-[16px] w-full"
               style={{ 
@@ -207,17 +297,26 @@ function App() {
                   currentLanguage={currentLanguage}
                 />
               </div>
+              {console.log('[App.jsx] Rendering SubjectFilterTabs done, now SubjectList...')}
               <SubjectList 
                 subjects={filteredSubjects} 
                 activeSubjectId={selectedSubjects[0]?.id} 
                 selectedSubjectIds={selectedSubjects.map(sub => sub.id)}
+                doneSubjectIds={doneSubjectIds}
                 onSubjectSelect={handleSubjectSelect} 
+                getSubjectRegistration={(subject) => ({
+                  individual: subject.pictureTypes.includes('Individual'),
+                  group: subject.pictureTypes.includes('Group'),
+                  family: subject.pictureTypes.includes('Family'),
+                })}
               />
             </div>
           </div>
         </>
       )}
-      <BottomNavigationBar activeItem={activeTab} onNavigate={setActiveTab} currentLanguage={currentLanguage} className="fixed bottom-0" />
+      {console.log('[App.jsx] Rendering BottomNavigationBar...')}
+      <BottomNavigationBar activeItem={activeTab} onNavigate={setActiveTab} currentLanguage={currentLanguage} className="fixed bottom-0"       />
+      {console.log('[App.jsx] Rendering MaxSubjectsModal, Toast, SwitchModeModal...')}
       <MaxSubjectsModal 
         isOpen={showMaxSubjectsModal}
         onClose={handleCloseMaxSubjectsModal}
@@ -239,5 +338,6 @@ function App() {
     </div>
   );
 }
-
+console.log('[App.jsx] About to export, App type:', typeof App);
 export default App;
+

@@ -1,6 +1,6 @@
 import React from 'react';
 import colors from '../colors';
-import groupIcon from '../icons/Single tagging/Group.svg';
+import namesListIcon from '../icons/nameslist.svg';
 import { translations } from '../mockData';
 
 const imgScanCode = "https://www.figma.com/api/mcp/asset/32c4b41c-90a4-4747-b9ce-8af906f6ff94"; // Scan barcode
@@ -16,7 +16,7 @@ function BottomNavigationItem({ iconSrc, label, isActive, onClick, currentLangua
     : `font-medium text-[${colors.neutral[500]}]`;
 
   return (
-    <div className="flex flex-1 flex-col gap-0 items-center px-2 py-2 relative cursor-pointer" onClick={onClick}>
+    <div className="flex flex-1 flex-col gap-0 items-center px-2 py-2 relative cursor-pointer bg-white" onClick={onClick}>
       <div className={`${activeIconClasses} flex items-center justify-center p-2 relative rounded-2xl shrink-0 size-10`}>
         <div className="relative shrink-0 size-6">
           <img alt={label} className="absolute block max-w-none size-full" src={iconSrc} />
@@ -29,11 +29,12 @@ function BottomNavigationItem({ iconSrc, label, isActive, onClick, currentLangua
   );
 }
 
-function BottomNavigationBar({ activeItem, onNavigate, currentLanguage }) {
+function BottomNavigationBar({ activeItem, onNavigate, currentLanguage, className = '' }) {
+  console.log('[BottomNavigationBar] Rendering');
   return (
-      <div className={`bg-[${colors.main.white}] flex h-[64px] items-center justify-around relative w-full border-t border-[${colors.neutral[200]}]`}>
+      <div className={`fixed bottom-0 left-0 right-0 z-20 bg-[${colors.main.white}] flex h-[64px] items-center justify-around w-full border-t border-[${colors.neutral[200]}] ${className}`.trim()}>
       <BottomNavigationItem
-        iconSrc={groupIcon}
+        iconSrc={namesListIcon}
         label={translations[currentLanguage].nameListTab}
         isActive={activeItem === 'nameList'}
         onClick={() => onNavigate('nameList')}

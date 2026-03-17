@@ -36,7 +36,7 @@ function BatteryAndroid2({ className }) {
 }
 
 function StatusBar({ name = "M 3284791" }) {
-  
+  console.log('[StatusBar] Rendering');
   return (
     <div className="flex flex-col items-start relative w-full">
       <div 
