@@ -40,7 +40,7 @@ function SubjectFilterTabs({ filters, activeFilter, onFilterChange, currentLangu
         {filters.map((filter) => (
           <Chips
             key={filter.id}
-            label={translations[currentLanguage][filter.labelKey]}
+            label={translations?.[currentLanguage]?.[filter.labelKey] ?? filter.labelKey}
             isActive={activeFilter === filter.id}
             onClick={() => onFilterChange(filter.id)}
           />

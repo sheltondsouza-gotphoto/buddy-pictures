@@ -267,7 +267,7 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
 
   if (!useSwipe) {
     return (
-      <div className="w-full py-2 px-4">
+      <div className="w-full py-2 px-16">
         {cardContent}
       </div>
     );
