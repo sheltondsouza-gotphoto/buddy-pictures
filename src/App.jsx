@@ -48,6 +48,7 @@ console.log('[App.jsx] Component types:', {
 const DO_NOT_SHOW_MAX_SUBJECTS_KEY = 'doNotShowMaxSubjectsModal';
 const DO_NOT_SHOW_SWITCH_MODE_KEY = 'doNotShowSwitchModeModal';
 const LANGUAGE_KEY = 'appLanguage';
+const MODE_SWITCH_STYLE_KEY = 'modeSwitchStyle';
 
 function App() {
   console.log('[App.jsx] App() rendering...');
@@ -59,6 +60,7 @@ function App() {
   // eslint-disable-next-line no-unused-vars
   const [isTabletView] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(localStorage.getItem(LANGUAGE_KEY) || 'en');
+  const [modeSwitchStyle, setModeSwitchStyle] = useState(localStorage.getItem(MODE_SWITCH_STYLE_KEY) || 'v2');
   const [showMaxSubjectsModal, setShowMaxSubjectsModal] = useState(false);
   const [doNotShowMaxSubjectsModal, setDoNotShowMaxSubjectsModal] = useState(false);
   const [showSwitchModeModal, setShowSwitchModeModal] = useState(false);
@@ -79,6 +81,10 @@ function App() {
     const storedSwitchPreference = localStorage.getItem(DO_NOT_SHOW_SWITCH_MODE_KEY);
     if (storedSwitchPreference === 'true') {
       setDoNotShowSwitchModeModal(true);
+    }
+    const storedModeSwitchStyle = localStorage.getItem(MODE_SWITCH_STYLE_KEY);
+    if (storedModeSwitchStyle === 'v1' || storedModeSwitchStyle === 'v2') {
+      setModeSwitchStyle(storedModeSwitchStyle);
     }
   }, []);
 
@@ -103,6 +109,11 @@ function App() {
   const handleLanguageChange = (lang) => {
     setCurrentLanguage(lang);
     localStorage.setItem(LANGUAGE_KEY, lang);
+  };
+
+  const handleModeSwitchStyleChange = (style) => {
+    setModeSwitchStyle(style);
+    localStorage.setItem(MODE_SWITCH_STYLE_KEY, style);
   };
 
   const handleFilterChange = (filterId) => {
@@ -238,14 +249,16 @@ function App() {
         </div>
       </div>
       {activeTab === 'settings' ? (
-        <>
+        <div className="flex flex-col flex-1 min-h-0 w-full">
           <div style={{ height: 56, flexShrink: 0 }} aria-hidden="true" />
           <SettingsPage 
             currentLanguage={currentLanguage} 
             onLanguageChange={handleLanguageChange}
+            modeSwitchStyle={modeSwitchStyle}
+            onModeSwitchStyleChange={handleModeSwitchStyleChange}
             onNavigateBack={() => setActiveTab('nameList')}
           />
-        </>
+        </div>
       ) : (
         <>
           <div style={{ height: headerHeight, flexShrink: 0 }} aria-hidden="true" />
@@ -261,6 +274,7 @@ function App() {
               onClearSelected={clearSelectedSubjects}
               onRemoveSubject={removeSubject}
               currentLanguage={currentLanguage}
+              modeSwitchStyle={modeSwitchStyle}
             />
           </div>
           <div 
