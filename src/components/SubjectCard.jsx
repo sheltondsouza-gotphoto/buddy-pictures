@@ -1,13 +1,92 @@
-import React from 'react';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
 import closeIcon from '../icons/Single tagging/Close.svg';
-import groupIcon from '../icons/Single tagging/Group.svg';
 import clearAllIcon from '../icons/Multi-tagging/clear all.svg';
 import colors from '../colors';
 import IconButton from './IconButton';
-import { translations } from '../mockData';
+import { translations, mockTaggingModes } from '../mockData';
+
+const SWIPE_THRESHOLD = 50;
+const SWIPE_ANIMATION_MS = 250;
 
 function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onClearSelected, onRemoveSubject, currentLanguage }) {
-  console.log('[SubjectCard] Rendering, IconButton type:', typeof IconButton);
+  const touchStartX = useRef(null);
+  const pointerStartX = useRef(null);
+  const containerRef = useRef(null);
+
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [exitDirection, setExitDirection] = useState(0);
+
+  const isMulti = taggingMode === mockTaggingModes.multi;
+
+  const getCurrentX = useCallback((e) => {
+    if (e.touches) return e.touches[0].clientX;
+    return e.clientX;
+  }, []);
+
+  const getEndX = useCallback((e) => {
+    if (e.changedTouches) return e.changedTouches[0].clientX;
+    return e.clientX;
+  }, []);
+
+  const handlePointerStart = useCallback((e) => {
+    if (isAnimating) return;
+    const x = getCurrentX(e);
+    touchStartX.current = x;
+    pointerStartX.current = x;
+    setDragOffset(0);
+  }, [isAnimating, getCurrentX]);
+
+  const handlePointerMove = useCallback((e) => {
+    if (touchStartX.current === null) return;
+    const x = getCurrentX(e);
+    const delta = x - pointerStartX.current;
+    setDragOffset(delta);
+  }, [getCurrentX]);
+
+  const handlePointerEnd = useCallback((e) => {
+    if (touchStartX.current === null) return;
+    const endX = getEndX(e);
+    const deltaX = endX - touchStartX.current;
+    touchStartX.current = null;
+    pointerStartX.current = null;
+
+    if (Math.abs(deltaX) >= SWIPE_THRESHOLD) {
+      const direction = deltaX > 0 ? 1 : -1;
+      setExitDirection(direction);
+      setIsAnimating(true);
+      setDragOffset(direction * (containerRef.current?.offsetWidth ?? 400));
+    } else {
+      setDragOffset(0);
+    }
+  }, [getEndX]);
+
+  useEffect(() => {
+    if (!isAnimating) return;
+    const timer = setTimeout(() => {
+      onToggleTaggingMode();
+      setIsAnimating(false);
+      setExitDirection(0);
+      setDragOffset(0);
+    }, SWIPE_ANIMATION_MS);
+    return () => clearTimeout(timer);
+  }, [isAnimating, onToggleTaggingMode]);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (touchStartX.current !== null && !e.touches) handlePointerMove(e);
+    };
+    const handleMouseUp = (e) => {
+      if (touchStartX.current !== null && !e.touches) handlePointerEnd(e);
+    };
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [handlePointerMove, handlePointerEnd]);
+
   const translatePictureType = (type) => {
     switch(type) {
       case 'Individual': return translations[currentLanguage].filterIndividual;
@@ -43,7 +122,6 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
       </div>
       <div className="flex gap-1 items-center shrink-0">
         <IconButton iconSrc={closeIcon} altText={translations[currentLanguage].subjectCardClose} onClick={() => onRemoveSubject(subject.id)} className="size-10" />
-        <IconButton iconSrc={groupIcon} altText={translations[currentLanguage].subjectCardGroup} onClick={onToggleTaggingMode} className="size-10" />
       </div>
     </div>
   );
@@ -98,14 +176,6 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
             </div>
             <div className="flex gap-1 items-center shrink-0">
               <IconButton iconSrc={clearAllIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClearSelected} className="size-10" />
-              <IconButton 
-                iconSrc={groupIcon} 
-                altText={translations[currentLanguage].subjectCardGroup} 
-                onClick={onToggleTaggingMode}
-                className="size-10"
-                style={{ backgroundColor: colors.neutral[800] }}
-                iconColor={colors.main.white}
-              />
             </div>
           </div>
         ) : (
@@ -118,14 +188,6 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
             </p>
             <div className="flex gap-1 items-center shrink-0">
               <IconButton iconSrc={clearAllIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClearSelected} className="size-10" />
-              <IconButton 
-                iconSrc={groupIcon} 
-                altText={translations[currentLanguage].subjectCardGroup} 
-                onClick={onToggleTaggingMode}
-                className="size-10"
-                style={{ backgroundColor: colors.neutral[800] }}
-                iconColor={colors.main.white}
-              />
             </div>
           </>
         )}
@@ -151,30 +213,81 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
       </p>
       <div className="flex gap-1 items-center shrink-0">
         <IconButton iconSrc={clearAllIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClearSelected} className="size-10 opacity-40" />
-        <IconButton 
-          iconSrc={groupIcon} 
-          altText={translations[currentLanguage].subjectCardGroup} 
-          onClick={onToggleTaggingMode}
-          className="size-10"
-          style={{ backgroundColor: colors.neutral[800] }}
-          iconColor={colors.main.white}
-        />
       </div>
     </div>
   );
 
-  switch (taggingMode) {
-    case 'single' : 
-      return selectedSubjects.length > 0 ? renderSingleTaggingSelected(selectedSubjects[0]) : renderSingleTaggingNoneSelected();
-    case 'multi' :
-      if (selectedSubjects.length === 0) {
-        return renderNoSubjectSelectedMultiTagging();
-      } else {
-        return renderMultiTaggingSelected(selectedSubjects);
-      }
-    default:
-      return renderSingleTaggingNoneSelected();
-  }
+  const cardContent = (() => {
+    switch (taggingMode) {
+      case 'single':
+        return selectedSubjects.length > 0 ? renderSingleTaggingSelected(selectedSubjects[0]) : renderSingleTaggingNoneSelected();
+      case 'multi':
+        if (selectedSubjects.length === 0) {
+          return renderNoSubjectSelectedMultiTagging();
+        } else {
+          return renderMultiTaggingSelected(selectedSubjects);
+        }
+      default:
+        return renderSingleTaggingNoneSelected();
+    }
+  })();
+
+  const swipeHintRight = translations[currentLanguage].subjectCardToMultiTag;
+  const swipeHintLeft = translations[currentLanguage].subjectCardToSingleTag;
+
+  return (
+    <div
+      ref={containerRef}
+      className="w-full py-2 px-16 overflow-hidden relative"
+      onTouchStart={handlePointerStart}
+      onTouchMove={handlePointerMove}
+      onTouchEnd={handlePointerEnd}
+      onMouseDown={handlePointerStart}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onToggleTaggingMode();
+        }
+      }}
+      aria-label={translations[currentLanguage].subjectCardSwipeHint}
+    >
+      {/* Hint text revealed as card swipes - left: To multi-tag (when in single), right: To single-tag (when in multi) */}
+      <div className="absolute inset-0 flex pointer-events-none z-0">
+        <div
+          className="flex-1 flex items-center justify-center px-4 transition-opacity duration-200"
+          style={{
+            opacity: !isMulti && (dragOffset > 20 || exitDirection > 0) ? 1 : 0.12,
+            color: colors.neutral[600]
+          }}
+        >
+          <span className="font-inter font-normal text-sm">{swipeHintRight}</span>
+        </div>
+        <div
+          className="flex-1 flex items-center justify-center px-4 transition-opacity duration-200"
+          style={{
+            opacity: isMulti && (dragOffset < -20 || exitDirection < 0) ? 1 : 0.12,
+            color: colors.neutral[600]
+          }}
+        >
+          <span className="font-inter font-normal text-sm">{swipeHintLeft}</span>
+        </div>
+      </div>
+
+      {/* Swipeable card */}
+      <div
+        className="relative z-10 touch-none select-none"
+        style={{
+          transform: `translateX(${dragOffset}px)`,
+          transition: isAnimating ? `transform ${SWIPE_ANIMATION_MS}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)` : 'none',
+          willChange: dragOffset !== 0 || isAnimating ? 'transform' : 'auto'
+        }}
+      >
+        {cardContent}
+      </div>
+    </div>
+  );
 }
 
 export default SubjectCard;
