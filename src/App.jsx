@@ -83,7 +83,7 @@ function App() {
       setDoNotShowSwitchModeModal(true);
     }
     const storedModeSwitchStyle = localStorage.getItem(MODE_SWITCH_STYLE_KEY);
-    if (storedModeSwitchStyle === 'v1' || storedModeSwitchStyle === 'v2') {
+    if (storedModeSwitchStyle === 'v1' || storedModeSwitchStyle === 'v2' || storedModeSwitchStyle === 'v3') {
       setModeSwitchStyle(storedModeSwitchStyle);
     }
   }, []);

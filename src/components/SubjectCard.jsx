@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import closeIcon from '../icons/Single tagging/Close.svg';
 import clearAllIcon from '../icons/Multi-tagging/clear all.svg';
+import clearAllV2Icon from '../icons/Multi-tagging/clear all v2.svg';
 import groupIcon from '../icons/Multi-tagging/Group.svg';
 import colors from '../colors';
 import IconButton from './IconButton';
@@ -65,13 +66,20 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
   useEffect(() => {
     if (!isAnimating) return;
     const timer = setTimeout(() => {
+      // v3: only swipe single→multi; in multi, clear-all button is the only way to exit
+      if (modeSwitchStyle === 'v3' && isMulti && exitDirection < 0) {
+        setIsAnimating(false);
+        setExitDirection(0);
+        setDragOffset(0);
+        return;
+      }
       onToggleTaggingMode();
       setIsAnimating(false);
       setExitDirection(0);
       setDragOffset(0);
     }, SWIPE_ANIMATION_MS);
     return () => clearTimeout(timer);
-  }, [isAnimating, onToggleTaggingMode]);
+  }, [isAnimating, onToggleTaggingMode, modeSwitchStyle, isMulti, exitDirection]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -96,6 +104,7 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
       default: return type;
     }
   };
+
 
   const renderSingleTaggingSelected = (subject, modeSwitchButton) => (
     <div 
@@ -154,7 +163,29 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
 
   const renderMultiTaggingSelected = (subjects, modeSwitchButton) => {
     const isMultiple = subjects.length > 1;
-    
+    const clearIcon = isV3 ? clearAllV2Icon : clearAllIcon;
+    const onClear = onClearSelected;
+    const v3RightSection = isV3 ? (
+      <div className="flex gap-2 items-center shrink-0">
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onToggleTaggingMode(); }}
+          className="flex items-center justify-center size-10 rounded-[40px] shrink-0 cursor-pointer transition-colors"
+          style={{ backgroundColor: '#2B2851', color: 'rgba(43, 40, 81, 1)' }}
+          aria-label={translations[currentLanguage].subjectCardSwitchToSingle}
+          title={translations[currentLanguage].subjectCardSwitchToSingle}
+        >
+          <img src={groupIcon} alt="" className="size-6" style={{ filter: 'brightness(0) invert(1)' }} />
+        </button>
+        <IconButton iconSrc={clearAllV2Icon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClear} className="size-10" />
+      </div>
+    ) : (
+      <div className="flex gap-2 items-center shrink-0">
+        <IconButton iconSrc={clearIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClear} className="size-10" />
+        {modeSwitchButton}
+      </div>
+    );
+
     return (
       <div 
         className={`flex ${isMultiple ? 'flex-col' : 'items-center justify-between'} px-3 py-2 rounded-lg w-full`}
@@ -180,53 +211,80 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
                 </div>
               ))}
             </div>
-            <div className="flex gap-2 items-center shrink-0">
-              <IconButton iconSrc={clearAllIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClearSelected} className="size-10" />
-              {modeSwitchButton}
-            </div>
+            {v3RightSection}
           </div>
         ) : (
           <>
-            <p 
-              className="font-inter font-bold text-base flex-1"
-              style={{ color: colors.communication.successText }}
-            >
-              {subjects[0].name}
-            </p>
-            <div className="flex gap-2 items-center shrink-0">
-              <IconButton iconSrc={clearAllIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClearSelected} className="size-10" />
-              {modeSwitchButton}
+            <div className="flex flex-col gap-1 flex-1 min-w-0">
+              <p 
+                className="font-inter font-bold text-base truncate"
+                style={{ color: colors.communication.successText }}
+              >
+                {subjects[0].name}
+              </p>
+              {isV3 && (
+                <p 
+                  className="font-inter font-normal text-xs truncate"
+                  style={{ color: colors.neutral[700] }}
+                >
+                  {translations[currentLanguage].subjectCardAddUpTo3}
+                </p>
+              )}
             </div>
+            {v3RightSection}
           </>
         )}
       </div>
     );
   };
 
-  const renderNoSubjectSelectedMultiTagging = (modeSwitchButton) => (
-    <div 
-      className="flex items-center justify-between px-3 py-2 rounded-lg w-full"
-      style={{ 
-        backgroundColor: colors.main.white,
-        borderColor: colors.neutral[800],
-        borderWidth: '2px',
-        borderStyle: 'solid'
-      }}
-    >
-      <p 
-        className="font-inter font-normal text-sm text-base flex-1"
-        style={{ color: colors.neutral[800] }}
-      >
-        No subject selected
-      </p>
+  const renderNoSubjectSelectedMultiTagging = (modeSwitchButton) => {
+    const clearIcon = isV3 ? clearAllV2Icon : clearAllIcon;
+    const onClear = onClearSelected;
+    const v3RightSection = isV3 ? (
       <div className="flex gap-2 items-center shrink-0">
-        <IconButton iconSrc={clearAllIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClearSelected} className="size-10 opacity-40" />
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onToggleTaggingMode(); }}
+          className="flex items-center justify-center size-10 rounded-[40px] shrink-0 cursor-pointer transition-colors"
+          style={{ backgroundColor: '#2B2851', color: 'rgba(43, 40, 81, 1)' }}
+          aria-label={translations[currentLanguage].subjectCardSwitchToSingle}
+          title={translations[currentLanguage].subjectCardSwitchToSingle}
+        >
+          <img src={groupIcon} alt="" className="size-6" style={{ filter: 'brightness(0) invert(1)' }} />
+        </button>
+        <IconButton iconSrc={clearAllV2Icon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClear} className="size-10 opacity-40" />
+      </div>
+    ) : (
+      <div className="flex gap-2 items-center shrink-0">
+        <IconButton iconSrc={clearIcon} altText={translations[currentLanguage].subjectCardClearAll} onClick={onClear} className="size-10 opacity-40" />
         {modeSwitchButton}
       </div>
-    </div>
-  );
+    );
 
-  const useSwipe = modeSwitchStyle === 'v2';
+    return (
+      <div 
+        className="flex items-center justify-between px-3 py-2 rounded-lg w-full"
+        style={{ 
+          backgroundColor: colors.main.white,
+          borderColor: colors.neutral[800],
+          borderWidth: '2px',
+          borderStyle: 'solid'
+        }}
+      >
+        <p 
+          className="font-inter font-normal text-sm text-base flex-1"
+          style={{ color: colors.neutral[800] }}
+        >
+          Select up to 3 subjects
+        </p>
+        {v3RightSection}
+      </div>
+    );
+  };
+
+  const useSwipe = modeSwitchStyle === 'v2' || modeSwitchStyle === 'v3';
+  const isV3 = modeSwitchStyle === 'v3';
   const switchButtonLabel = isMulti
     ? translations[currentLanguage].subjectCardSwitchToSingle
     : translations[currentLanguage].subjectCardSwitchToMulti;
@@ -286,12 +344,13 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
+          if (isV3 && isMulti) return;
           onToggleTaggingMode();
         }
       }}
       aria-label={translations[currentLanguage].subjectCardSwipeHint}
     >
-      {/* Hint text revealed as card swipes - left: To multi-tag (when in single), right: To single-tag (when in multi) */}
+      {/* Hint text revealed as card swipes - left: To multi-tag (when in single), right: To single-tag (when in multi, v2 only) */}
       <div className="absolute inset-0 flex pointer-events-none z-0">
         <div
           className="flex-1 flex items-center justify-center px-4 transition-opacity duration-200"
@@ -305,7 +364,7 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
         <div
           className="flex-1 flex items-center justify-center px-4 transition-opacity duration-200"
           style={{
-            opacity: isMulti && (dragOffset < -20 || exitDirection < 0) ? 1 : 0.12,
+            opacity: isMulti && !isV3 && (dragOffset < -20 || exitDirection < 0) ? 1 : 0.12,
             color: colors.neutral[600]
           }}
         >
