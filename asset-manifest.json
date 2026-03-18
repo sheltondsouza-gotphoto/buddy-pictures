@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/buddy-pictures/static/css/main.6aa5d54d.css",
-    "main.js": "/buddy-pictures/static/js/main.8a9d62d7.js",
+    "main.js": "/buddy-pictures/static/js/main.a211980d.js",
     "static/js/453.6e4f956a.chunk.js": "/buddy-pictures/static/js/453.6e4f956a.chunk.js",
     "static/media/group cancelled.svg": "/buddy-pictures/static/media/group cancelled.3515d862c0d719e6d566aaf3b16dad9a.svg",
     "static/media/Group.svg": "/buddy-pictures/static/media/Group.0c29a15f549b868c4a25015d1e997490.svg",
@@ -14,14 +14,15 @@
     "index.html": "/buddy-pictures/index.html",
     "static/media/clear all.svg": "/buddy-pictures/static/media/clear all.788c5e245e3892571c009c7089366413.svg",
     "static/media/Edit.svg": "/buddy-pictures/static/media/Edit.a0c482924ffdab7fda021f27f591bb85.svg",
+    "static/media/clear all v2.svg": "/buddy-pictures/static/media/clear all v2.a2d64d97d4a099ff31f151a37640d217.svg",
     "static/media/Close.svg": "/buddy-pictures/static/media/Close.e2f343ad97591f38a7f8bafe1712f0a2.svg",
     "static/media/Chevron Left.svg": "/buddy-pictures/static/media/Chevron Left.873b60d4cf1b83aa667ee62bc3504d1b.svg",
     "main.6aa5d54d.css.map": "/buddy-pictures/static/css/main.6aa5d54d.css.map",
-    "main.8a9d62d7.js.map": "/buddy-pictures/static/js/main.8a9d62d7.js.map",
+    "main.a211980d.js.map": "/buddy-pictures/static/js/main.a211980d.js.map",
     "453.6e4f956a.chunk.js.map": "/buddy-pictures/static/js/453.6e4f956a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.6aa5d54d.css",
-    "static/js/main.8a9d62d7.js"
+    "static/js/main.a211980d.js"
   ]
 }
