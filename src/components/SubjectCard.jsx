@@ -3,12 +3,14 @@ import closeIcon from '../icons/Single tagging/Close.svg';
 import clearAllIcon from '../icons/Multi-tagging/clear all.svg';
 import clearAllV2Icon from '../icons/Multi-tagging/clear all v2.svg';
 import groupIcon from '../icons/Multi-tagging/Group.svg';
+import trashIcon from '../icons/Trash.svg';
 import colors from '../colors';
 import IconButton from './IconButton';
 import { translations, mockTaggingModes } from '../mockData';
 
 const SWIPE_THRESHOLD = 50;
 const SWIPE_ANIMATION_MS = 250;
+const SWIPE_DELETE_REVEAL_WIDTH = 52;
 
 function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onClearSelected, onRemoveSubject, currentLanguage, modeSwitchStyle = 'v2' }) {
   const touchStartX = useRef(null);
@@ -16,6 +18,8 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
   const containerRef = useRef(null);
 
   const [dragOffset, setDragOffset] = useState(0);
+  const [swipingSubjectId, setSwipingSubjectId] = useState(null);
+  const [swipeDeleteOffsets, setSwipeDeleteOffsets] = useState({});
   const [isAnimating, setIsAnimating] = useState(false);
   const [exitDirection, setExitDirection] = useState(0);
 
@@ -43,8 +47,13 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
     if (touchStartX.current === null) return;
     const x = getCurrentX(e);
     const delta = x - pointerStartX.current;
+    // v3/v4: block left swipe (multi→single) - card should not move
+    if ((modeSwitchStyle === 'v3' || modeSwitchStyle === 'v4') && isMulti && delta < 0) {
+      setDragOffset(0);
+      return;
+    }
     setDragOffset(delta);
-  }, [getCurrentX]);
+  }, [getCurrentX, modeSwitchStyle, isMulti]);
 
   const handlePointerEnd = useCallback((e) => {
     if (touchStartX.current === null) return;
@@ -55,19 +64,24 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
 
     if (Math.abs(deltaX) >= SWIPE_THRESHOLD) {
       const direction = deltaX > 0 ? 1 : -1;
+      // v3/v4: block left swipe (multi→single) - do not trigger mode switch or animation
+      if ((modeSwitchStyle === 'v3' || modeSwitchStyle === 'v4') && isMulti && direction < 0) {
+        setDragOffset(0);
+        return;
+      }
       setExitDirection(direction);
       setIsAnimating(true);
       setDragOffset(direction * (containerRef.current?.offsetWidth ?? 400));
     } else {
       setDragOffset(0);
     }
-  }, [getEndX]);
+  }, [getEndX, modeSwitchStyle, isMulti]);
 
   useEffect(() => {
     if (!isAnimating) return;
     const timer = setTimeout(() => {
-      // v3: only swipe single→multi; in multi, clear-all button is the only way to exit
-      if (modeSwitchStyle === 'v3' && isMulti && exitDirection < 0) {
+      // v3/v4: only swipe single→multi; in multi, clear-all button is the only way to exit
+      if ((modeSwitchStyle === 'v3' || modeSwitchStyle === 'v4') && isMulti && exitDirection < 0) {
         setIsAnimating(false);
         setExitDirection(0);
         setDragOffset(0);
@@ -95,6 +109,62 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [handlePointerMove, handlePointerEnd]);
+
+  const swipeDeleteStartX = useRef(null);
+  const swipeDeleteOffsetAtStart = useRef(0);
+  const handleSwipeDeleteStart = useCallback((e, subjectId) => {
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    swipeDeleteStartX.current = x;
+    swipeDeleteOffsetAtStart.current = swipeDeleteOffsets[subjectId] ?? 0;
+    setSwipingSubjectId(subjectId);
+  }, [swipeDeleteOffsets]);
+
+  const handleSwipeDeleteMove = useCallback((e, subjectId) => {
+    if (swipingSubjectId !== subjectId) return;
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const delta = x - swipeDeleteStartX.current;
+    const newOffset = Math.min(SWIPE_DELETE_REVEAL_WIDTH, Math.max(0, swipeDeleteOffsetAtStart.current + delta));
+    setSwipeDeleteOffsets((prev) => ({ ...prev, [subjectId]: newOffset }));
+  }, [swipingSubjectId]);
+
+  const handleSwipeDeleteEnd = useCallback((e, subjectId) => {
+    if (swipingSubjectId !== subjectId) return;
+    const threshold = SWIPE_DELETE_REVEAL_WIDTH / 2;
+    setSwipeDeleteOffsets((prev) => {
+      const current = prev[subjectId] ?? 0;
+      return { ...prev, [subjectId]: current >= threshold ? SWIPE_DELETE_REVEAL_WIDTH : 0 };
+    });
+    swipeDeleteStartX.current = null;
+    setSwipingSubjectId(null);
+  }, [swipingSubjectId]);
+
+  const handleSwipeDeleteCancel = useCallback(() => {
+    setSwipingSubjectId(null);
+    swipeDeleteStartX.current = null;
+  }, []);
+
+  const handleDeleteSubject = useCallback((e, subjectId) => {
+    e.stopPropagation();
+    onRemoveSubject(subjectId);
+    setSwipeDeleteOffsets((prev) => {
+      const next = { ...prev };
+      delete next[subjectId];
+      return next;
+    });
+    setSwipingSubjectId(null);
+  }, [onRemoveSubject]);
+
+  useEffect(() => {
+    if (!swipingSubjectId) return;
+    const handleMouseMove = (e) => handleSwipeDeleteMove(e, swipingSubjectId);
+    const handleMouseUp = (e) => handleSwipeDeleteEnd(e, swipingSubjectId);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [swipingSubjectId, handleSwipeDeleteMove, handleSwipeDeleteEnd]);
 
   const translatePictureType = (type) => {
     switch(type) {
@@ -163,9 +233,9 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
 
   const renderMultiTaggingSelected = (subjects, modeSwitchButton) => {
     const isMultiple = subjects.length > 1;
-    const clearIcon = isV3 ? clearAllV2Icon : clearAllIcon;
+    const clearIcon = (isV3 || isV4) ? clearAllV2Icon : clearAllIcon;
     const onClear = onClearSelected;
-    const v3RightSection = isV3 ? (
+    const v3RightSection = (isV3 || isV4) ? (
       <div className="flex gap-2 items-center shrink-0">
         <button
           type="button"
@@ -200,15 +270,57 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
           <div className="flex items-start justify-between w-full">
             <div className="flex flex-col gap-1 flex-1 min-w-0">
               {subjects.map((subject, index) => (
-                <div key={index} className="flex gap-1 items-center py-1 w-full">
-                  <IconButton iconSrc={closeIcon} altText={translations[currentLanguage].subjectCardClose} onClick={() => onRemoveSubject(subject.id)} className="size-10" />
-                  <p 
-                    className="font-inter font-bold text-base flex-1 truncate"
-                    style={{ color: colors.communication.successText }}
+                isV4 ? (
+                  <div
+                    key={subject.id}
+                    className="relative overflow-hidden rounded-lg w-full"
+                    style={{ borderBottom: '0px' }}
                   >
-                    {subject.name}
-                  </p>
-                </div>
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteSubject(e, subject.id)}
+                      className="absolute left-0 top-0 bottom-0 w-[52px] flex items-center justify-center shrink-0 z-0 cursor-pointer"
+                      style={{ backgroundColor: colors.communication.criticalBg }}
+                      aria-label={translations[currentLanguage].subjectCardClose}
+                      title={translations[currentLanguage].subjectCardClose}
+                    >
+                      <img src={trashIcon} alt="" className="size-6" />
+                    </button>
+                    <div
+                      className="relative flex gap-1 items-center py-1 px-1 min-h-[44px] touch-none select-none"
+                      style={{
+                        transform: `translateX(${swipeDeleteOffsets[subject.id] ?? 0}px)`,
+                        transition: swipingSubjectId === subject.id ? 'none' : 'transform 0.2s ease-out',
+                        backgroundColor: colors.main.white,
+                      }}
+                      onTouchStart={(e) => handleSwipeDeleteStart(e, subject.id)}
+                      onTouchMove={(e) => handleSwipeDeleteMove(e, subject.id)}
+                      onTouchEnd={(e) => handleSwipeDeleteEnd(e, subject.id)}
+                      onTouchCancel={handleSwipeDeleteCancel}
+                      onPointerDown={(e) => { e.button === 0 && handleSwipeDeleteStart(e, subject.id); }}
+                      onPointerUp={(e) => { e.button === 0 && handleSwipeDeleteEnd(e, subject.id); }}
+                      onPointerLeave={handleSwipeDeleteCancel}
+                      onPointerCancel={handleSwipeDeleteCancel}
+                    >
+                      <p
+                        className="font-inter font-bold text-base flex-1 truncate pl-2"
+                        style={{ color: colors.communication.successText }}
+                      >
+                        {subject.name}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div key={subject.id} className="flex gap-1 items-center py-1 w-full">
+                    <IconButton iconSrc={closeIcon} altText={translations[currentLanguage].subjectCardClose} onClick={() => onRemoveSubject(subject.id)} className="size-10" />
+                    <p
+                      className="font-inter font-bold text-base flex-1 truncate"
+                      style={{ color: colors.communication.successText }}
+                    >
+                      {subject.name}
+                    </p>
+                  </div>
+                )
               ))}
             </div>
             {v3RightSection}
@@ -222,7 +334,7 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
               >
                 {subjects[0].name}
               </p>
-              {isV3 && (
+              {(isV3 || isV4) && (
                 <p 
                   className="font-inter font-normal text-xs truncate"
                   style={{ color: colors.neutral[700] }}
@@ -239,9 +351,9 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
   };
 
   const renderNoSubjectSelectedMultiTagging = (modeSwitchButton) => {
-    const clearIcon = isV3 ? clearAllV2Icon : clearAllIcon;
+    const clearIcon = (isV3 || isV4) ? clearAllV2Icon : clearAllIcon;
     const onClear = onClearSelected;
-    const v3RightSection = isV3 ? (
+    const v3RightSection = (isV3 || isV4) ? (
       <div className="flex gap-2 items-center shrink-0">
         <button
           type="button"
@@ -283,8 +395,9 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
     );
   };
 
-  const useSwipe = modeSwitchStyle === 'v2' || modeSwitchStyle === 'v3';
+  const useSwipe = modeSwitchStyle === 'v2' || modeSwitchStyle === 'v3'; // v4 uses long-press on list, no swipe
   const isV3 = modeSwitchStyle === 'v3';
+  const isV4 = modeSwitchStyle === 'v4';
   const switchButtonLabel = isMulti
     ? translations[currentLanguage].subjectCardSwitchToSingle
     : translations[currentLanguage].subjectCardSwitchToMulti;
@@ -344,7 +457,7 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          if (isV3 && isMulti) return;
+          if ((isV3 || isV4) && isMulti) return;
           onToggleTaggingMode();
         }
       }}
@@ -364,7 +477,7 @@ function SubjectCard({ taggingMode, selectedSubjects, onToggleTaggingMode, onCle
         <div
           className="flex-1 flex items-center justify-center px-4 transition-opacity duration-200"
           style={{
-            opacity: isMulti && !isV3 && (dragOffset < -20 || exitDirection < 0) ? 1 : 0.12,
+            opacity: isMulti && !isV3 && !isV4 && (dragOffset < -20 || exitDirection < 0) ? 1 : 0.12,
             color: colors.neutral[600]
           }}
         >

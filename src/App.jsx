@@ -83,7 +83,7 @@ function App() {
       setDoNotShowSwitchModeModal(true);
     }
     const storedModeSwitchStyle = localStorage.getItem(MODE_SWITCH_STYLE_KEY);
-    if (storedModeSwitchStyle === 'v1' || storedModeSwitchStyle === 'v2' || storedModeSwitchStyle === 'v3') {
+    if (['v1', 'v2', 'v3', 'v4'].includes(storedModeSwitchStyle)) {
       setModeSwitchStyle(storedModeSwitchStyle);
     }
   }, []);
@@ -121,6 +121,16 @@ function App() {
       setActiveFilter('all');
     } else {
       setActiveFilter(filterId);
+    }
+  };
+
+  const handleLongPressAddSecondSubject = (subject) => {
+    if (taggingMode !== mockTaggingModes.single || selectedSubjects.length !== 1) return;
+    if (selectedSubjects.some(sub => sub.id === subject.id)) return;
+    setTaggingMode(mockTaggingModes.multi);
+    setSelectedSubjects([...selectedSubjects, subject]);
+    if (!doneSubjectIds.includes(subject.id)) {
+      setDoneSubjectIds([...doneSubjectIds, subject.id]);
     }
   };
 
@@ -323,6 +333,9 @@ function App() {
                   group: subject.pictureTypes.includes('Group'),
                   family: subject.pictureTypes.includes('Family'),
                 })}
+                modeSwitchStyle={modeSwitchStyle}
+                taggingMode={taggingMode}
+                onLongPressAddSecondSubject={handleLongPressAddSecondSubject}
               />
             </div>
           </div>

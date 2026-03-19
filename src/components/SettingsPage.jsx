@@ -76,6 +76,7 @@ function SettingsPage({ currentLanguage, onLanguageChange, modeSwitchStyle, onMo
             <option value="v1">{translations[currentLanguage].settingsModeSwitchV1}</option>
             <option value="v2">{translations[currentLanguage].settingsModeSwitchV2}</option>
             <option value="v3">{translations[currentLanguage].settingsModeSwitchV3}</option>
+            <option value="v4">{translations[currentLanguage].settingsModeSwitchV4}</option>
           </select>
         </div>
       </div>

@@ -1,8 +1,7 @@
 import React from 'react';
 import SubjectListItem from './SubjectListItem';
 
-function SubjectList({ subjects, activeSubjectId, selectedSubjectIds = [], doneSubjectIds = [], onSubjectSelect, getSubjectRegistration }) {
-  console.log('[SubjectList] Rendering, SubjectListItem type:', typeof SubjectListItem);
+function SubjectList({ subjects, activeSubjectId, selectedSubjectIds = [], doneSubjectIds = [], onSubjectSelect, getSubjectRegistration, modeSwitchStyle, taggingMode, onLongPressAddSecondSubject }) {
   // Support both single (activeSubjectId) and multi-select (selectedSubjectIds)
   const isSubjectActive = (subjectId) => {
     if (selectedSubjectIds.length > 0) {
@@ -10,6 +9,8 @@ function SubjectList({ subjects, activeSubjectId, selectedSubjectIds = [], doneS
     }
     return activeSubjectId === subjectId;
   };
+
+  const isV4LongPressEnabled = modeSwitchStyle === 'v4' && taggingMode === 'single' && selectedSubjectIds.length === 1;
 
   return (
     <div className="flex flex-col items-start relative shrink-0 w-full">
@@ -21,6 +22,8 @@ function SubjectList({ subjects, activeSubjectId, selectedSubjectIds = [], doneS
           isDone={doneSubjectIds.includes(subject.id) && !isSubjectActive(subject.id)}
           onClick={() => onSubjectSelect(subject.id)}
           registration={getSubjectRegistration(subject)}
+          enableLongPressAdd={isV4LongPressEnabled && !selectedSubjectIds.includes(subject.id)}
+          onLongPressAdd={onLongPressAddSecondSubject}
         />
       ))}
     </div>
